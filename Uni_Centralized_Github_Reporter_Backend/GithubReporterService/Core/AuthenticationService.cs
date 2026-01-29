@@ -32,7 +32,7 @@ public class AuthenticationService : IAuthenticationService
 		Account account = _accountRepository.GetByEmailMockAsync(email).Result;
 		if (account == null)
 		{
-			return ApiResponse<LoginResponse>.ErrorResponse("Account not foun with Email.", 404);
+			return ApiResponse<LoginResponse>.ErrorResponse("Account not found with Email.", 404);
 		}
 
 		bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, account.PasswordHash);
