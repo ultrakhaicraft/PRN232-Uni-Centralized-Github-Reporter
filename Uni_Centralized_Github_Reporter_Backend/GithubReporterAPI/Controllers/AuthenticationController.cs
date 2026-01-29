@@ -1,4 +1,6 @@
-﻿using GithubReporterService.DTO;
+﻿using GithubReporterRepository.Interface;
+using GithubReporterRepository.Models;
+using GithubReporterService.DTO;
 using GithubReporterService.DTO.Request;
 using GithubReporterService.Interface;
 using Microsoft.AspNetCore.Mvc;

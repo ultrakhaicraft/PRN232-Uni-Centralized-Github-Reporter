@@ -1,8 +1,12 @@
 using GithubReporterRepository;
 using GithubReporterRepository.Core;
 using GithubReporterRepository.Interface;
+using GithubReporterRepository.Models;
+using GithubReporterService.Core;
+using GithubReporterService.Interface;
 using GithubReporterService.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,12 +36,14 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
+builder.Services.AddDbContext<GithubReporterContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
+   
+
 //Add Services from other layers (TODO: Add a wrapper class to handle this)
-//builder.Services.AddScoped<GithubReporterRepository.Interface.IUnitOfWork, GithubReporterRepository.Core.UnitOfWork>();
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();   
-builder.Services.AddSingleton<InMemoryUserStoreTemp>();
 builder.Services.AddSingleton<TokenProvider>();
-builder.Services.AddScoped<GithubReporterService.Interface.IAuthenticationService, GithubReporterService.Core.AuthenticationService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 var app = builder.Build();
 

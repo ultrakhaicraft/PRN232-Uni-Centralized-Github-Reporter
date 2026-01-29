@@ -1,4 +1,5 @@
 ﻿using GithubReporterRepository.EntityModel;
+using GithubReporterRepository.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -33,9 +34,9 @@ public class TokenProvider
 		//Add claims
 		var claims = new[]
 		{
-			new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, account.Username),
+			new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, account.Name),
 			new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, account.Email),
-			new System.Security.Claims.Claim("AccountId", account.Id.ToString())
+			new System.Security.Claims.Claim("AccountId", account.AccountId.ToString())
 		};
 
 		//Generate token

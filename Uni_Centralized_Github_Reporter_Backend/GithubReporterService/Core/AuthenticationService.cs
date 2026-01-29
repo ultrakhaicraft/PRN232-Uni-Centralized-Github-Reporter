@@ -1,5 +1,6 @@
 ﻿using GithubReporterRepository.EntityModel;
 using GithubReporterRepository.Interface;
+using GithubReporterRepository.Models;
 using GithubReporterService.DTO;
 using GithubReporterService.DTO.Response;
 using GithubReporterService.Interface;
@@ -14,10 +15,10 @@ namespace GithubReporterService.Core;
 
 public class AuthenticationService : IAuthenticationService
 {
-	private readonly IAccountRepository _accountRepository;
+	private readonly IGenericRepository<Account> _accountRepository;
 	private readonly TokenProvider _tokenProvider;
 
-	public AuthenticationService(IAccountRepository accountRepository, TokenProvider tokenProvider)
+	public AuthenticationService(IGenericRepository<Account> accountRepository, TokenProvider tokenProvider)
 	{
 		_accountRepository = accountRepository;
 		_tokenProvider = tokenProvider;
@@ -29,13 +30,13 @@ public class AuthenticationService : IAuthenticationService
 	// Login method to validate user credentials
 	public ApiResponse<LoginResponse> ValidateUserCredentials(string email, string password)
 	{
-		Account account = _accountRepository.GetByEmailMockAsync(email).Result;
+		Account account = _accountRepository.FirstOrDefaultAsync(p=>p.Email == email).Result;
 		if (account == null)
 		{
 			return ApiResponse<LoginResponse>.ErrorResponse("Account not found with Email.", 404);
 		}
 
-		bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, account.PasswordHash);
+		bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, account.Password);
 
 		if(!isPasswordValid)
 		{
