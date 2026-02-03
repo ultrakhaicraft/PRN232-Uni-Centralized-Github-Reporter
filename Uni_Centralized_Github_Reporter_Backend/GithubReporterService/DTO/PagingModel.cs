@@ -44,6 +44,21 @@ namespace GithubReporterService.DTO
 
 	}
 
+	public class GroupTeamPagedRequest : PagedRequest
+	{
+		public Guid? AccountId { get; set; }
+		public GroupTeamPagedRequest(
+			int Page = 1,
+			int PageSize = 20,
+			string? SearchKeyword = null,
+			bool? IsAscending = null,
+			string? Fields = null,
+			Guid? AccountId = null
+		) : base(Page, PageSize, SearchKeyword, IsAscending, Fields)
+		{
+		}
+	}
+
 
 	public record PagedResult<T>(
 		int Page,

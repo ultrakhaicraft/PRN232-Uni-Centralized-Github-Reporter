@@ -37,7 +37,7 @@ public class ProjectController : Controller
 		if(result == null)
 		{
 			return NotFound(ApiResponse<PagedResult<ProjectViewDTO>>
-				.ErrorResponse("No Account found", statusCode: APIStatusCode.NotFound.GetHashCode()));
+				.ErrorResponse("No Project found", statusCode: APIStatusCode.NotFound.GetHashCode()));
 		}
 		
 		return Ok(ApiResponse<PagedResult<ProjectViewDTO>>.SuccessResponse(result, "Projects retrieved successfully"));
@@ -46,7 +46,7 @@ public class ProjectController : Controller
 
 	[HttpGet("{projectId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<ProjectDetailDTO>>> GetDetail(int projectId)
+	public async Task<ActionResult<ApiResponse<ProjectDetailDTO>>> GetDetail(Guid projectId)
 	{
 
 		var result = await _projectService.GetProjectById(projectId);
@@ -88,7 +88,7 @@ public class ProjectController : Controller
 
 	[HttpPut("{projectId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> Edit(int projectId, [FromBody] UpdateProjectDTO request)
+	public async Task<ActionResult<ApiResponse<object>>> Edit(Guid projectId, [FromBody] UpdateProjectDTO request)
 	{
 
 		if (!ModelState.IsValid)

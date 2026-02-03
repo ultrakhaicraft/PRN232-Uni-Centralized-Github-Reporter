@@ -12,9 +12,9 @@ namespace GithubReporterService.Interface
 	public interface IProjectService
 	{
 		Task<PagedResult<ProjectViewDTO>> SearchProject(ProjectPagedRequest request);
-		Task<ProjectDetailDTO> GetProjectById(int projectId);
+		Task<ProjectDetailDTO> GetProjectById(Guid projectId);
 		Task CreateProject(CreateProjectDTO request);
-		Task UpdateProject(UpdateProjectDTO request, int projectId);
+		Task UpdateProject(UpdateProjectDTO request, Guid projectId);
 		Task DeleteProject(int projectId);
 
 

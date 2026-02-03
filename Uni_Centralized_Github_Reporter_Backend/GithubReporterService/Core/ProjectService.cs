@@ -21,10 +21,11 @@ namespace GithubReporterService.Core
 		private readonly IGenericRepository<Project> _projectRepository;
 		private readonly IMapper _mapper;
 
-		public ProjectService(IUnitOfWork unitOfWork, IGenericRepository<Project> projectRepository)
+		public ProjectService(IUnitOfWork unitOfWork, IGenericRepository<Project> projectRepository, IMapper mapper)
 		{
 			_unitOfWork = unitOfWork;
 			_projectRepository = projectRepository;
+			_mapper = mapper;
 		}
 
 		public async Task CreateProject(CreateProjectDTO request)
@@ -39,28 +40,28 @@ namespace GithubReporterService.Core
 
 		public async Task DeleteProject(int projectId)
 		{
-			GithubReporterRepository.Models.Project category = await _projectRepository.GetByIdAsync(projectId);
+			GithubReporterRepository.Models.Project project = await _projectRepository.GetByIdAsync(projectId);
 
-			if (category == null)
+			if (project == null)
 			{
 				throw new NotFoundException($"Project with {projectId} not found");
 			}
 
-			_projectRepository.Delete(category);
+			_projectRepository.Delete(project);
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public async Task<ProjectDetailDTO> GetProjectById(int projectId)
+		public async Task<ProjectDetailDTO> GetProjectById(Guid projectId)
 		{
 
-			Project category = await _projectRepository.GetByIdAsync(projectId);
+			Project project = await _projectRepository.GetByIdAsync(projectId);
 
-			if (category == null)
+			if (project == null)
 			{
 				throw new NotFoundException($"Project with {projectId} not found");
 			}
 
-			var detailDTO =  _mapper.Map<ProjectDetailDTO>(category);
+			var detailDTO =  _mapper.Map<ProjectDetailDTO>(project);
 
 			return detailDTO;
 		}
@@ -70,15 +71,23 @@ namespace GithubReporterService.Core
 			//Search + Filter
 			IQueryable<Project> projects = _projectRepository.GetQueryable();
 
+			// Search by ProjectName
+
+			if (!string.IsNullOrEmpty(request.SearchKeyword))
+			{
+				projects = projects.Where(p => p.ProjectName.Contains(request.SearchKeyword));
+			}
+
+
 			if (projects == null || !projects.Any())
 			{
-				throw new NotFoundException("No projects found");
+				throw new NotFoundException("No projects found with the matching criteria");
 			}
 
 			var totalCount = await projects.CountAsync();
 
 
-			// Sorting when needed, sort by CategoryName alphabetically
+			// Sorting when needed, sort by projectName alphabetically
 			if (request.IsAscending.HasValue)
 			{
 				projects = request.IsAscending.Value ? projects.OrderBy(t => t.ProjectName) :
@@ -106,7 +115,7 @@ namespace GithubReporterService.Core
 			return pagedData;
 		}
 
-		public async Task UpdateProject(UpdateProjectDTO request, int projectId)
+		public async Task UpdateProject(UpdateProjectDTO request, Guid projectId)
 		{
 			Project project = await _projectRepository.GetByIdAsync(projectId);
 

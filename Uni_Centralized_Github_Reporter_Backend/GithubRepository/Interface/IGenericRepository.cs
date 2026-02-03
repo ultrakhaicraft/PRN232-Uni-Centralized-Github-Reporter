@@ -12,6 +12,9 @@ namespace GithubReporterRepository.Interface
 		// Get operations
 		Task<T?> GetByIdAsync(int id);
 		Task<T?> GetByIdAsync(string id);
+
+		Task<T?> GetByIdAsync(Guid id);
+
 		Task<IEnumerable<T>> GetAllAsync();
 		IQueryable<T> GetQueryable();
 		Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
