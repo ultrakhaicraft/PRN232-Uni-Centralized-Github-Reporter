@@ -1,4 +1,5 @@
 ﻿using GithubReporterRepository.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,19 @@ namespace GithubReporterRepository.Core
 			return await _dbSet.FindAsync(id);
 		}
 
+		public virtual async Task<T?> GetByIdAsync(Guid id)
+		{
+			return await _dbSet.FindAsync(id);
+		}
+
 		public virtual async Task<IEnumerable<T>> GetAllAsync()
 		{
 			return await _dbSet.ToListAsync();
+		}
+
+		public virtual IQueryable<T> GetQueryable()
+		{
+			return _dbSet.AsQueryable();
 		}
 
 		public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
