@@ -10,26 +10,28 @@ CREATE TABLE Account (
     Email NVARCHAR(100) NOT NULL,
     Password NVARCHAR(255) NOT NULL,
     Status INT NOT NULL,
-    RoleID UNIQUEIDENTIFIER NOT NULL,
+    Role INT NOT NULL,
     DateCreated DATETIME NOT NULL DEFAULT GETDATE(),
     GithubEmail NVARCHAR(200)
 );
 
 CREATE TABLE Supervisor (
     SupervisorID UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+	AccountID  UNIQUEIDENTIFIER NOT NULL,
     SupervisorCode NVARCHAR(25) NOT NULL,
 
     CONSTRAINT FK_Supervisor_Account
-        FOREIGN KEY (SupervisorID)
+        FOREIGN KEY (AccountID)
         REFERENCES Account(AccountID)
 );
 
 CREATE TABLE Student (
     StudentID UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+	AccountID  UNIQUEIDENTIFIER NOT NULL,
     StudentCode NVARCHAR(25) NOT NULL,
 
     CONSTRAINT FK_Student_Account
-        FOREIGN KEY (StudentID)
+        FOREIGN KEY (AccountID)
         REFERENCES Account(AccountID)
 );
 
