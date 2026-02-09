@@ -17,7 +17,7 @@ public partial class Account
 
     public int Status { get; set; }
 
-    public Guid RoleId { get; set; }
+    public int Role { get; set; }
 
     public DateTime DateCreated { get; set; }
 
@@ -29,7 +29,7 @@ public partial class Account
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
-    public virtual Student Student { get; set; }
+    public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 
-    public virtual Supervisor Supervisor { get; set; }
+    public virtual ICollection<Supervisor> Supervisors { get; set; } = new List<Supervisor>();
 }

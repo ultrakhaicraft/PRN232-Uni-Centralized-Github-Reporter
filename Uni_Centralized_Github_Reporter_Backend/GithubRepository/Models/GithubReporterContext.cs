@@ -31,7 +31,7 @@ public partial class GithubReporterContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Account__349DA58681656706");
+            entity.HasKey(e => e.AccountId).HasName("PK__Account__349DA586B2A13C03");
 
             entity.ToTable("Account");
 
@@ -51,12 +51,11 @@ public partial class GithubReporterContext : DbContext
             entity.Property(e => e.Password)
                 .IsRequired()
                 .HasMaxLength(255);
-            entity.Property(e => e.RoleId).HasColumnName("RoleID");
         });
 
         modelBuilder.Entity<GradePerProject>(entity =>
         {
-            entity.HasKey(e => e.GradePerProjectId).HasName("PK__GradePer__8BEA86BD78158337");
+            entity.HasKey(e => e.GradePerProjectId).HasName("PK__GradePer__8BEA86BD402B5BED");
 
             entity.ToTable("GradePerProject");
 
@@ -81,7 +80,7 @@ public partial class GithubReporterContext : DbContext
 
         modelBuilder.Entity<GroupTeam>(entity =>
         {
-            entity.HasKey(e => e.GroupId).HasName("PK__GroupTea__149AF30A4B6EFCB0");
+            entity.HasKey(e => e.GroupId).HasName("PK__GroupTea__149AF30A46B8DFB5");
 
             entity.ToTable("GroupTeam");
 
@@ -118,7 +117,7 @@ public partial class GithubReporterContext : DbContext
 
         modelBuilder.Entity<Project>(entity =>
         {
-            entity.HasKey(e => e.ProjectId).HasName("PK__Project__761ABED02637483E");
+            entity.HasKey(e => e.ProjectId).HasName("PK__Project__761ABED06E532F3C");
 
             entity.ToTable("Project");
 
@@ -145,7 +144,7 @@ public partial class GithubReporterContext : DbContext
 
         modelBuilder.Entity<Report>(entity =>
         {
-            entity.HasKey(e => e.ReportId).HasName("PK__Report__D5BD48E5CDE90CBC");
+            entity.HasKey(e => e.ReportId).HasName("PK__Report__D5BD48E525D98C39");
 
             entity.ToTable("Report");
 
@@ -177,38 +176,40 @@ public partial class GithubReporterContext : DbContext
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.StudentId).HasName("PK__Student__32C52A79ADB25055");
+            entity.HasKey(e => e.StudentId).HasName("PK__Student__32C52A793FC486B2");
 
             entity.ToTable("Student");
 
             entity.Property(e => e.StudentId)
                 .ValueGeneratedNever()
                 .HasColumnName("StudentID");
+            entity.Property(e => e.AccountId).HasColumnName("AccountID");
             entity.Property(e => e.StudentCode)
                 .IsRequired()
                 .HasMaxLength(25);
 
-            entity.HasOne(d => d.StudentNavigation).WithOne(p => p.Student)
-                .HasForeignKey<Student>(d => d.StudentId)
+            entity.HasOne(d => d.Account).WithMany(p => p.Students)
+                .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Student_Account");
         });
 
         modelBuilder.Entity<Supervisor>(entity =>
         {
-            entity.HasKey(e => e.SupervisorId).HasName("PK__Supervis__6FAABDAFB02DDE0A");
+            entity.HasKey(e => e.SupervisorId).HasName("PK__Supervis__6FAABDAF85BD4A61");
 
             entity.ToTable("Supervisor");
 
             entity.Property(e => e.SupervisorId)
                 .ValueGeneratedNever()
                 .HasColumnName("SupervisorID");
+            entity.Property(e => e.AccountId).HasColumnName("AccountID");
             entity.Property(e => e.SupervisorCode)
                 .IsRequired()
                 .HasMaxLength(25);
 
-            entity.HasOne(d => d.SupervisorNavigation).WithOne(p => p.Supervisor)
-                .HasForeignKey<Supervisor>(d => d.SupervisorId)
+            entity.HasOne(d => d.Account).WithMany(p => p.Supervisors)
+                .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Supervisor_Account");
         });

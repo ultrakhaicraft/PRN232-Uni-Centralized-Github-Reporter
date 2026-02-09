@@ -9,9 +9,11 @@ public partial class Student
 {
     public Guid StudentId { get; set; }
 
+    public Guid AccountId { get; set; }
+
     public string StudentCode { get; set; }
 
-    public virtual ICollection<GradePerProject> GradePerProjects { get; set; } = new List<GradePerProject>();
+    public virtual Account Account { get; set; }
 
-    public virtual Account StudentNavigation { get; set; }
+    public virtual ICollection<GradePerProject> GradePerProjects { get; set; } = new List<GradePerProject>();
 }

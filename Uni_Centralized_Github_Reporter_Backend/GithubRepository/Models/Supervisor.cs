@@ -9,9 +9,11 @@ public partial class Supervisor
 {
     public Guid SupervisorId { get; set; }
 
+    public Guid AccountId { get; set; }
+
     public string SupervisorCode { get; set; }
 
-    public virtual ICollection<GroupTeam> GroupTeams { get; set; } = new List<GroupTeam>();
+    public virtual Account Account { get; set; }
 
-    public virtual Account SupervisorNavigation { get; set; }
+    public virtual ICollection<GroupTeam> GroupTeams { get; set; } = new List<GroupTeam>();
 }
