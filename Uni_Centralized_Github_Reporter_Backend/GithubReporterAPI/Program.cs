@@ -44,6 +44,9 @@ builder.Services.AddDbContext<GithubReporterContext>(options =>
 builder.Services.AddSingleton<TokenProvider>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IGroupTeamService, GroupTeamService>();
+builder.Services.AddScoped<IGithubService, GithubService>();
+builder.Services.AddScoped<IReporterService, ReporterService>();
 
 var app = builder.Build();
 

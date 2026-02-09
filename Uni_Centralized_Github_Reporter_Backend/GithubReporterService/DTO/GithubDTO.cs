@@ -11,9 +11,11 @@ public class CommitDto
 	public string Sha { get; set; }
 	public string Message { get; set; }
 	public string Author { get; set; }
+	public string AuthorEmail { get; set; }
 	public DateTime Date { get; set; }
 	public int Additions { get; set; }
 	public int Deletions { get; set; }
+	public int TotalChanges { get; set; }
 	public string Url { get; set; }
 }
 
@@ -21,21 +23,35 @@ public class PullRequestDto
 {
 	public int Number { get; set; }
 	public string Title { get; set; }
-	public string State { get; set; }
+	public string State { get; set; }  // "open", "closed"
+	public string CreatedBy { get; set; }
 	public DateTime CreatedAt { get; set; }
+	public DateTime? UpdatedAt { get; set; }
+	public DateTime? ClosedAt { get; set; }
 	public DateTime? MergedAt { get; set; }
+	public bool IsMerged { get; set; }
 	public string Url { get; set; }
+	public string Body { get; set; }
+	public int CommitsCount { get; set; }
+	public int ChangedFiles { get; set; }
+	public int Additions { get; set; }
+	public int Deletions { get; set; }
 }
 
 public class IssueDto
 {
 	public int Number { get; set; }
 	public string Title { get; set; }
-	public string State { get; set; }
+	public string State { get; set; }  // "open" or "closed"
+	public string CreatedBy { get; set; }
 	public DateTime CreatedAt { get; set; }
+	public DateTime? UpdatedAt { get; set; }
 	public DateTime? ClosedAt { get; set; }
+	public string Body { get; set; }
 	public int Comments { get; set; }
 	public string Url { get; set; }
+	public List<string> Labels { get; set; }
+	public List<string> Assignees { get; set; }
 }
 
 // DTOs/GithubReportRequest.cs

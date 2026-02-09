@@ -9,11 +9,8 @@ namespace GithubReporterService.Interface;
 
 public interface IGithubService
 {
-	Task<GroupReport> GenerateGroupReportAsync(GithubReportRequest request);
-	Task<StudentContributionReport> GenerateStudentReportAsync(
-		string owner,
-		string repo,
-		string username,
-		DateTime? startDate = null,
-		DateTime? endDate = null);
+	Task<List<CommitDto>> GetAllCommitsAsync(string repositoryUrl);
+	Task<List<PullRequestDto>> GetAllPullRequestsAsync(string repositoryUrl);
+	Task<List<IssueDto>> GetAllIssuesAsync(string repositoryUrl);
+
 }
