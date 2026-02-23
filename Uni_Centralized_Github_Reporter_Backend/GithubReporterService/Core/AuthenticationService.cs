@@ -1,5 +1,4 @@
-﻿using GithubReporterRepository.EntityModel;
-using GithubReporterRepository.Interface;
+﻿using GithubReporterRepository.Interface;
 using GithubReporterRepository.Models;
 using GithubReporterService.DTO;
 using GithubReporterService.DTO.Response;

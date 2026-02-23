@@ -20,6 +20,14 @@ namespace GithubReporterService.Utilities
 			CreateMap<CreateProjectDTO, Project>();
 			CreateMap<UpdateProjectDTO, Project>();
 
+			CreateMap<GradePerProject, ViewStudentGradeDTO>();
+			CreateMap<AddStudentGradeDTO, GradePerProject>();
+
+			CreateMap<GroupTeam, GroupTeamDetailDTO>();
+			CreateMap<GroupTeam, GroupTeamViewDTO>();
+			CreateMap<CreateGroupDTO, GroupTeam>();
+			CreateMap<UpdateGroupDTO, GroupTeam>();
+
 
 
 		}
