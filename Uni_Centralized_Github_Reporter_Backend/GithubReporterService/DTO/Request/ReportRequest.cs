@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GithubReporterService.DTO.Request
 {
-	public class CommitPagedRequest : PagedRequest
+	public record CommitPagedRequest : PagedRequest
 	{
 		[Required]
 		public string RepositoryUrl { get; set; } = null!;
@@ -16,14 +16,14 @@ namespace GithubReporterService.DTO.Request
 
 	}
 
-	public class PullRequestPagedRequest : PagedRequest
+	public record PullRequestPagedRequest : PagedRequest
 	{
 		[Required]
 		public string RepositoryUrl { get; set; } = null!;
 		public PullRequestPagedRequest() { }
 	}
 
-	public class IssuePagedRequest : PagedRequest
+	public record IssuePagedRequest : PagedRequest
 	{
 		[Required]
 		public string RepositoryUrl { get; set; } = null!;

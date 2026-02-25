@@ -1,3 +1,5 @@
+using AutoMapper;
+using GithubReporterAPI.Utilities;
 using GithubReporterRepository;
 using GithubReporterRepository.Core;
 using GithubReporterRepository.Interface;
@@ -7,7 +9,9 @@ using GithubReporterService.Interface;
 using GithubReporterService.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +19,37 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	options.SwaggerDoc("v1", new OpenApiInfo { Title = "Lab 2 API", Version = "v1" });
+
+	// 1. Define the 'Bearer' security scheme
+	options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+	{
+		Name = "Authorization",
+		Type = SecuritySchemeType.Http,
+		Scheme = "Bearer",
+		BearerFormat = "JWT",
+		In = ParameterLocation.Header,
+		Description = "Enter your JWT token in the text input below.\r\n\r\nExample: 'eyJhbGciOiJIUzI1Ni...' (Do not prefix with 'Bearer ')"
+	});
+
+	// 2. Make sure Swagger uses that scheme globally
+	options.AddSecurityRequirement(new OpenApiSecurityRequirement
+	{
+		{
+			new OpenApiSecurityScheme
+			{
+				Reference = new OpenApiReference
+				{
+					Type = ReferenceType.SecurityScheme,
+					Id = "Bearer"
+				}
+			},
+			Array.Empty<string>()
+		}
+	});
+});
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -38,17 +72,19 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddDbContext<GithubReporterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
-   
+
+builder.Services.AddScoped<DbContext>(provider =>
+	provider.GetRequiredService<GithubReporterContext>());
+
 
 //Add Services from other layers (TODO: Add a wrapper class to handle this)
-builder.Services.AddSingleton<TokenProvider>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<IGroupTeamService, GroupTeamService>();
-builder.Services.AddScoped<IGithubService, GithubService>();
-builder.Services.AddScoped<IReporterService, ReporterService>();
+builder.Services.AddInfrastructure();
+
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionHandler>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

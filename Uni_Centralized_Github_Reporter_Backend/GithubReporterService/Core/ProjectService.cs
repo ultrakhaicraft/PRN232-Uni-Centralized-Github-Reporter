@@ -33,6 +33,8 @@ namespace GithubReporterService.Core
 
 			var newProject = _mapper.Map<Project>(request);
 
+			newProject.ProjectId = Guid.NewGuid();
+
 			await _projectRepository.AddAsync(newProject);
 			await _unitOfWork.SaveChangesAsync();
 
@@ -124,9 +126,9 @@ namespace GithubReporterService.Core
 				throw new NotFoundException($"Project with {projectId} not found");
 			}
 
-			var updatedProject = _mapper.Map<Project>(request);
+			 project = _mapper.Map<Project>(request);
 
-			_projectRepository.Update(updatedProject);
+			_projectRepository.Update(project);
 			await _unitOfWork.SaveChangesAsync();
 
 		}

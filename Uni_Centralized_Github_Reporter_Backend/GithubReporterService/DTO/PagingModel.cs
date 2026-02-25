@@ -6,57 +6,40 @@ using System.Threading.Tasks;
 
 namespace GithubReporterService.DTO
 {
-	public class PagedRequest
-	{
-		public PagedRequest(
+	public record PagedRequest(
 		int Page = 1,
 		int PageSize = 20,
 		string? SearchKeyword = null,
 		bool? IsAscending = null,
-		string? Fields = null)
-		{
-			this.Page = Page;
-			this.PageSize = PageSize;
-			this.SearchKeyword = SearchKeyword;
-			this.IsAscending = IsAscending;
-			this.Fields = Fields;
-		}
+		string? Fields = null
+	);
+	
 
-		// Properties
-		public int Page { get; set; }
-		public int PageSize { get; set; }
-		public string? SearchKeyword { get; set; }
-		public bool? IsAscending { get; set; }
-		public string? Fields { get; set; }
-	}
-
-	public class ProjectPagedRequest : PagedRequest
+	public record ProjectPagedRequest : PagedRequest
 	{
-		public ProjectPagedRequest(
-			int Page = 1,
-			int PageSize = 20,
-			string? SearchKeyword = null,
-			bool? IsAscending = null,
-			string? Fields = null
-		) : base(Page, PageSize, SearchKeyword, IsAscending, Fields)
-		{
-		}
+		
 
 	}
 
-	public class GroupTeamPagedRequest : PagedRequest
+	public record AccountPagedRequest : PagedRequest
+	{
+		public int? Role { get; set; }
+		public int? Status { get; set; }
+	}
+
+	public record GradePagedRequest : PagedRequest
+	{
+		public Guid? StudentId { get; set; }
+
+		public Guid? ProjectId { get; set; }
+
+	
+	}
+
+	public record GroupTeamPagedRequest : PagedRequest
 	{
 		public Guid? AccountId { get; set; }
-		public GroupTeamPagedRequest(
-			int Page = 1,
-			int PageSize = 20,
-			string? SearchKeyword = null,
-			bool? IsAscending = null,
-			string? Fields = null,
-			Guid? AccountId = null
-		) : base(Page, PageSize, SearchKeyword, IsAscending, Fields)
-		{
-		}
+		
 	}
 
 

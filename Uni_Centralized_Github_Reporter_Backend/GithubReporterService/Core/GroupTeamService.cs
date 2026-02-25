@@ -28,6 +28,8 @@ namespace GithubReporterService.Core
 		{
 			var newGroup = _mapper.Map<GroupTeam>(request);
 
+			newGroup.GroupId = Guid.NewGuid();
+
 			await _groupTeamRepository.AddAsync(newGroup);
 			await _unitOfWork.SaveChangesAsync();
 		}
@@ -125,9 +127,9 @@ namespace GithubReporterService.Core
 				throw new Utilities.NotFoundException($"Group team with {groupId} not found");
 			}
 
-			var updatedGroup = _mapper.Map<GroupTeam>(request);
+			group = _mapper.Map<GroupTeam>(request);
 
-			_groupTeamRepository.Update(updatedGroup);
+			_groupTeamRepository.Update(group);
 			await _unitOfWork.SaveChangesAsync();
 		}
 	}

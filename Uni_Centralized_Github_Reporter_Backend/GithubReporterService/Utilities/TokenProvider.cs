@@ -1,5 +1,4 @@
-﻿using GithubReporterRepository.EntityModel;
-using GithubReporterRepository.Models;
+﻿using GithubReporterRepository.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
