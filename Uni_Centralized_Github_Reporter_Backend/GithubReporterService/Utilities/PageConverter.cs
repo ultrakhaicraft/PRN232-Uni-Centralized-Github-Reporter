@@ -23,5 +23,19 @@ namespace GithubReporterService.Utilities
 			return new PagedResult<T>(page, pageSize, totalPage, totalItems, pagedItems);
 
 		}
+
+		public static PagedResult<T> EnumrableToPagedResult(
+			int page, int pageSize, int totalItems, IEnumerable<T> queryableData)
+		{
+			var pagedItems = queryableData.Skip((page - 1) * pageSize)
+							   .Take(pageSize)
+							   .ToList();
+
+			int totalPage = (int)Math.Ceiling((double)totalItems / pageSize);
+
+
+			return new PagedResult<T>(page, pageSize, totalPage, totalItems, pagedItems);
+
+		}
 	}
 }

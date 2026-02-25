@@ -26,11 +26,11 @@ namespace GithubReporterService.Core
 			var allCommits = await _githubService.GetAllCommitsAsync(request.RepositoryUrl);
 
 			// Apply pagination
-			var pagedCommits = await PageConverter<CommitDto>.ToPagedResult(
+			var pagedCommits =  PageConverter<CommitDto>.EnumrableToPagedResult(
 				request.Page,
 				request.PageSize,
 				allCommits.Count,
-				allCommits.AsQueryable()
+				allCommits
 			);	
 
 			return pagedCommits;
@@ -43,11 +43,11 @@ namespace GithubReporterService.Core
 			var allCommits = await _githubService.GetAllPullRequestsAsync(request.RepositoryUrl);
 
 			// Apply pagination
-			var pagedCommits = await PageConverter<PullRequestDto>.ToPagedResult(
+			var pagedCommits =  PageConverter<PullRequestDto>.EnumrableToPagedResult(
 				request.Page,
 				request.PageSize,
 				allCommits.Count,
-				allCommits.AsQueryable()
+				allCommits
 			);
 
 			return pagedCommits;
@@ -60,11 +60,11 @@ namespace GithubReporterService.Core
 			var allCommits = await _githubService.GetAllIssuesAsync(request.RepositoryUrl);
 
 			// Apply pagination
-			var pagedCommits = await PageConverter<IssueDto>.ToPagedResult(
+			var pagedCommits =  PageConverter<IssueDto>.EnumrableToPagedResult(
 				request.Page,
 				request.PageSize,
 				allCommits.Count,
-				allCommits.AsQueryable()
+				allCommits
 			);
 
 			return pagedCommits;

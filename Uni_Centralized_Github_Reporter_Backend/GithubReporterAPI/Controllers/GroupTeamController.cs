@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace GithubReporterAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/groupteams")]
 [ApiController]
 public class GroupTeamController : Controller
 {
@@ -23,7 +23,7 @@ public class GroupTeamController : Controller
 
 
 	/// <summary>
-	/// Search accounts with pagination, sorting and filtering
+	/// Search group with pagination, sorting and filtering
 	/// </summary>
 	/// <param name="request"></param>
 	/// <returns></returns>

@@ -5,6 +5,7 @@ using GithubReporterRepository.Models;
 using GithubReporterService.DTO;
 using GithubReporterService.DTO.Request;
 using GithubReporterService.DTO.Response;
+using GithubReporterService.Interface;
 using GithubReporterService.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace GithubReporterService.Core
 {
-	public class StudentGradeService
+	public class StudentGradeService : IStudentGradeService
 	{
 		private readonly IGenericRepository<GradePerProject> _gradePerProjectRepository;
 		private readonly IGenericRepository<Student> _studentRepository;

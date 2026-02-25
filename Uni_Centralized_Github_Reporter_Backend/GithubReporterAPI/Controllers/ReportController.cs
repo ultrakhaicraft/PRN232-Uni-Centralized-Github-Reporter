@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GithubReporterAPI.Controllers
 {
 	[ApiController]
-	[Route("api/[controller]")]
+	[Route("api/reports")]
 	public class ReportController : Controller
 	{
 		private readonly IReporterService _reporterService;

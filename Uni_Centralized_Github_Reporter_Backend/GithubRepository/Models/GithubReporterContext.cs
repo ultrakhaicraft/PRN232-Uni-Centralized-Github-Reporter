@@ -190,7 +190,7 @@ public partial class GithubReporterContext : DbContext
 
             entity.HasOne(d => d.Account).WithMany(p => p.Students)
                 .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Student_Account");
         });
 
@@ -210,7 +210,7 @@ public partial class GithubReporterContext : DbContext
 
             entity.HasOne(d => d.Account).WithMany(p => p.Supervisors)
                 .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Supervisor_Account");
         });
 

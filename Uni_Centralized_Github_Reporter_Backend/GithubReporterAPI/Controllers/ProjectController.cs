@@ -13,7 +13,7 @@ namespace GithubReporterAPI.Controllers;
 /// Manage Github-like projects in the application.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/projects")]
 public class ProjectController : Controller
 {
 	private readonly IProjectService _projectService;
@@ -24,7 +24,7 @@ public class ProjectController : Controller
 	}
 
 	/// <summary>
-	/// Search accounts with pagination, sorting and filtering
+	/// Search Project with pagination, sorting and filtering
 	/// </summary>
 	/// <param name="request"></param>
 	/// <returns></returns>
@@ -81,7 +81,7 @@ public class ProjectController : Controller
 		}
 
 		await _projectService.CreateProject(request);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Account created successfully"));
+		return Ok(ApiResponse<object>.SuccessResponse(null, "Project created successfully"));
 
 	}
 

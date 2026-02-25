@@ -21,6 +21,12 @@ namespace GithubReporterService.DTO
 
 	}
 
+	public record AccountPagedRequest : PagedRequest
+	{
+		public int? Role { get; set; }
+		public int? Status { get; set; }
+	}
+
 	public record GradePagedRequest : PagedRequest
 	{
 		public Guid? StudentId { get; set; }
