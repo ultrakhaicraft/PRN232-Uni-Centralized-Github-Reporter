@@ -24,54 +24,130 @@ namespace GithubReporterService.Core
 			_unitOfWork = unitOfWork;
 		}
 
+		/// <summary>
+		/// Create a new group team with a singluar account
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		public async Task CreateGroupTeam(CreateGroupDTO request)
 		{
 			var newGroup = _mapper.Map<GroupTeam>(request);
-
-			newGroup.GroupId = Guid.NewGuid();
-
 			await _groupTeamRepository.AddAsync(newGroup);
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public async Task DeleteGroupTeam(Guid groupId)
+		/// <summary>
+		/// Assign a team member to a project with some validation
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		/// <exception cref="Utilities.NotFoundException"></exception>
+		/// <exception cref="Utilities.BadRequestException"></exception>
+		public async Task AddTeamMember(CreateGroupDTO request)
 		{
-			GroupTeam groupTeam = await _groupTeamRepository.GetByIdAsync(groupId);
+			// Check if group team exist by checking if there is a projectId exist
+			var existingGroupTeam = await _groupTeamRepository.FindAsync(o => o.ProjectId == request.ProjectId);
+			if (existingGroupTeam == null)
+			{
+				throw new Utilities.NotFoundException($"Group team with project id {request.ProjectId} not found");
+			}
+
+			// Check if the team member already exist
+			var existingTeamMember = await _groupTeamRepository.FirstOrDefaultAsync(o => o.ProjectId == request.ProjectId && o.AccountId == request.AccountId);
+			if (existingTeamMember != null)
+			{
+				throw new Utilities.BadRequestException($"Team member with account id {request.AccountId} already exist in project {request.ProjectId}");
+			}
+
+			// Check if there is a team leader exist in the group team 
+			GroupTeam teamLeader = existingGroupTeam.FirstOrDefault(o => o.ProjectId == request.ProjectId && o.GroupRole == 1);
+			if (teamLeader != null)
+			{
+				throw new Utilities.NotFoundException($"A Team Leader has already exist, please assign a different role");
+			}
+
+
+			var newGroup = _mapper.Map<GroupTeam>(request);
+			await _groupTeamRepository.AddAsync(newGroup);
+			await _unitOfWork.SaveChangesAsync();
+		}
+
+		/// <summary>
+		/// Updates the role of a team member within a group based on the specified request.
+		/// </summary>
+		/// <param name="request">An object containing the details required to update the team member's role, including the group and member
+		/// identifiers and the new role to assign. Cannot be null.</param>
+		/// <returns>A task that represents the asynchronous operation.</returns>
+		public async Task UpdateTeamMemberRole(UpdateGroupDTO request)
+		{
+			// Check if the team member  exist
+			var existingTeamMember = await _groupTeamRepository.FirstOrDefaultAsync(o => o.ProjectId == request.ProjectId && o.AccountId == request.AccountId);
+			if (existingTeamMember == null)
+			{
+				throw new Utilities.BadRequestException($"Team member with account id {request.AccountId} already exist in project {request.ProjectId}");
+			}
+
+			existingTeamMember.GroupRole = request.GroupRole;
+
+			_groupTeamRepository.Update(existingTeamMember);
+			await _unitOfWork.SaveChangesAsync();
+
+		}
+
+		/// <summary>
+		///  Remove a team member from a project by deleting the corresponding GroupTeam entry based on the provided accountId and projectId.
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="projectId"></param>
+		/// <returns></returns>
+		/// <exception cref="Utilities.NotFoundException"></exception>
+		public async Task RemoveTeamMember(Guid accountId, Guid projectId)
+		{
+			GroupTeam groupTeam = await _groupTeamRepository.FirstOrDefaultAsync(o=>o.AccountId==accountId && o.ProjectId==projectId);
 
 			if (groupTeam == null)
 			{
-				throw new Utilities.NotFoundException($"Group Team with {groupId} not found");
+				throw new Utilities.NotFoundException($"Can't found the specific team member with {accountId} in project {projectId} not found");
 			}
 
 			_groupTeamRepository.Delete(groupTeam);
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public async Task<GroupTeamDetailDTO> GetGroupTeamById(Guid groupId)
-		{
-			GroupTeam project = await _groupTeamRepository.GetByIdAsync(groupId);
 
-			if (project == null)
+		/// <summary>
+		/// Get all the members in a specific group team by the projectId 
+		/// </summary>
+		/// <param name="groupId"></param>
+		/// <returns></returns>
+		/// <exception cref="Utilities.NotFoundException"></exception>
+		public async Task<List<GroupTeamDetailDTO>> GetGroupTeamByProjectId(Guid projectId)
+		{
+			IEnumerable<GroupTeam> groupTeams = await _groupTeamRepository.FindAsync(o => o.ProjectId == projectId);
+
+			if (groupTeams == null)
 			{
-				throw new Utilities.NotFoundException($"Group team with {groupId} not found");
+				throw new Utilities.NotFoundException($"Group team with {projectId} not found");
 			}
 
-			var detailDTO = _mapper.Map<GroupTeamDetailDTO>(project);
-
-			return detailDTO;
+			// Convert to List of DTOs
+			var memberDtos = groupTeams.Select(gt => _mapper.Map<GroupTeamDetailDTO>(gt)).ToList();
+			return memberDtos;
 		}
 
+
+		/// <summary>
+		/// Get a paginated list of all the group teams available with search and filter
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		/// <exception cref="Utilities.NotFoundException"></exception>
 		public async Task<PagedResult<GroupTeamViewDTO>> SearchGroupTeam(GroupTeamPagedRequest request)
 		{
 			//Search + Filter
 			IQueryable<GroupTeam> groupTeams = _groupTeamRepository.GetQueryable();
 
-			// Search by GroupName
-
-			if (!string.IsNullOrEmpty(request.SearchKeyword))
-			{
-				groupTeams = groupTeams.Where(p => p.GroupName.Contains(request.SearchKeyword));
-			}
+			
 
 			// Search By AccountId
 
@@ -88,11 +164,11 @@ namespace GithubReporterService.Core
 
 			var totalCount = await groupTeams.CountAsync();
 
-			// Sorting By Group Name
+			// Sorting By Project Id
 			if (request.IsAscending.HasValue)
 			{
-				groupTeams = request.IsAscending.Value ? groupTeams.OrderBy(t => t.GroupName) :
-					groupTeams.OrderByDescending(t => t.GroupName);
+				groupTeams = request.IsAscending.Value ? groupTeams.OrderBy(t => t.ProjectId) :
+					groupTeams.OrderByDescending(t => t.ProjectId);
 			}
 
 			// Pagination
@@ -104,13 +180,9 @@ namespace GithubReporterService.Core
 				pageSize: request.PageSize,
 				totalItems: totalCount,
 				queryableData: groupTeams.Select(p => new GroupTeamViewDTO
-				{
-					GroupId = p.GroupId,
-					GroupCode = p.GroupCode,
-					GroupName = p.GroupName,
+				{			
 					GroupRole = p.GroupRole,
 					AccountId = p.AccountId,
-					SupervisorId = p.SupervisorId,
 					ProjectId = p.ProjectId,
 				})
 			).Result;
@@ -118,19 +190,6 @@ namespace GithubReporterService.Core
 			return pagedData;
 		}
 
-		public async Task UpdateGroupTeam(UpdateGroupDTO request, Guid groupId)
-		{
-			GroupTeam group = await _groupTeamRepository.GetByIdAsync(groupId);
-
-			if (group == null)
-			{
-				throw new Utilities.NotFoundException($"Group team with {groupId} not found");
-			}
-
-			group = _mapper.Map<GroupTeam>(request);
-
-			_groupTeamRepository.Update(group);
-			await _unitOfWork.SaveChangesAsync();
-		}
+	
 	}
 }

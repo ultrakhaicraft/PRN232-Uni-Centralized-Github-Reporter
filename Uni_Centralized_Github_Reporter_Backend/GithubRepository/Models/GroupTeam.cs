@@ -5,25 +5,24 @@ using System.Collections.Generic;
 
 namespace GithubReporterRepository.Models;
 
+
+/// <summary>
+/// A Many to Many table that links the Project, Account and Supervisor tables. 
+/// A Project can have multiple accounts and a account can be in multiple projects.
+/// </summary>
 public partial class GroupTeam
 {
-    public Guid GroupId { get; set; }
-
-    public string GroupName { get; set; }
-
-    public string GroupCode { get; set; }
 
     public Guid AccountId { get; set; }
 
-    public int GroupRole { get; set; }
+    public int GroupRole { get; set; } // indicates the role of the account in the project (Member, Leader, Supervisor)
 
-    public Guid ProjectId { get; set; }
+	public Guid ProjectId { get; set; }
 
-    public Guid SupervisorId { get; set; }
 
     public virtual Account Account { get; set; }
 
     public virtual Project Project { get; set; }
 
-    public virtual Supervisor Supervisor { get; set; }
+    
 }

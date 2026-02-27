@@ -8,9 +8,6 @@ namespace GithubReporterService.DTO.Request
 {
 	public class CreateGroupDTO
 	{
-		public string GroupName { get; set; }
-
-		public string GroupCode { get; set; }
 
 		public Guid AccountId { get; set; }
 
@@ -18,14 +15,10 @@ namespace GithubReporterService.DTO.Request
 
 		public Guid ProjectId { get; set; }
 
-		public Guid SupervisorId { get; set; }
 	}
 
 	public class UpdateGroupDTO
 	{
-		public string GroupName { get; set; }
-
-		public string GroupCode { get; set; }
 
 		public Guid AccountId { get; set; }
 
@@ -33,6 +26,5 @@ namespace GithubReporterService.DTO.Request
 
 		public Guid ProjectId { get; set; }
 
-		public Guid SupervisorId { get; set; }
 	}
 }

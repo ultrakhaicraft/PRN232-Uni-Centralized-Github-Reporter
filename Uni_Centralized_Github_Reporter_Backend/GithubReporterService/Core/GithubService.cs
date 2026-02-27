@@ -39,6 +39,7 @@ namespace GithubReporterService.Core
 					Sha = c.Sha,
 					Message = c.Commit.Message,
 					Author = c.Commit.Author.Name,
+					AuthorEmail = c.Commit.Author.Email,
 					Date = c.Commit.Author.Date.DateTime,
 					Url = c.HtmlUrl
 				}).ToList();
