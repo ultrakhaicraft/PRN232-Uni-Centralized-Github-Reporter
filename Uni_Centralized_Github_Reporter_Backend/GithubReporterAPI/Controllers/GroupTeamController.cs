@@ -23,7 +23,7 @@ public class GroupTeamController : Controller
 
 
 	/// <summary>
-	/// Search group with pagination, sorting and filtering
+	/// Search group with pagination, sorting and filtering. Do not use SearchKeyword for now as it is not implemented yet, use AccountId for search
 	/// </summary>
 	/// <param name="request"></param>
 	/// <returns></returns>
@@ -43,20 +43,20 @@ public class GroupTeamController : Controller
 
 	}
 
-	[HttpGet("{groupId}")]
+	[HttpGet("{projectId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<GroupTeamDetailDTO>>> GetDetail(Guid groupId)
+	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetDetail(Guid projectId)
 	{
 
-		var result = await _groupTeamService.GetGroupTeamById(groupId);
+		var result = await _groupTeamService.GetGroupTeamByProjectId(projectId);
 
 		if (result == null)
 		{
-			return NotFound(ApiResponse<GroupTeamDetailDTO>
-				.ErrorResponse($"No Group Team with Id {groupId} found", statusCode: APIStatusCode.NotFound.GetHashCode()));
+			return NotFound(ApiResponse<List<GroupTeamDetailDTO>>
+				.ErrorResponse($"No Group Team with Id {projectId} found", statusCode: APIStatusCode.NotFound.GetHashCode()));
 		}
 
-		return Ok(ApiResponse<GroupTeamDetailDTO>.SuccessResponse(result, "Groups retrieved successfully"));
+		return Ok(ApiResponse<List<GroupTeamDetailDTO>>.SuccessResponse(result, "Groups retrieved successfully"));
 
 	}
 
@@ -86,37 +86,14 @@ public class GroupTeamController : Controller
 	}
 
 
-	[HttpPut("{groupId}")]
+
+	[HttpDelete("delete")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> Edit(Guid groupId, [FromBody] UpdateGroupDTO request)
+	public async Task<ActionResult<ApiResponse<object>>> RemoveTeamMember([FromQuery] Guid accountId, [FromQuery] Guid projectId)
 	{
 
-		if (!ModelState.IsValid)
-		{
-			var errors = ModelState.Values
-				.SelectMany(v => v.Errors)
-				.Select(e => e.ErrorMessage)
-				.ToList();
-
-			return BadRequest(ApiResponse<object>.ErrorResponse(
-				"Validation failed",
-				400,
-				errors
-			));
-		}
-
-		await _groupTeamService.UpdateGroupTeam(request, groupId);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Group Team updated successfully"));
-
-	}
-
-	[HttpDelete("{groupId}")]
-	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> Delete(Guid groupId)
-	{
-
-		await _groupTeamService.DeleteGroupTeam(groupId);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Group Team deleted successfully"));
+		await _groupTeamService.RemoveTeamMember(accountId, projectId);
+		return Ok(ApiResponse<object>.SuccessResponse(null, "A Team Member deleted successfully"));
 
 	}
 }

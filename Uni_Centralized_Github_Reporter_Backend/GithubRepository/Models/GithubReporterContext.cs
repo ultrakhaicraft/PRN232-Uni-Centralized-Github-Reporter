@@ -80,26 +80,21 @@ public partial class GithubReporterContext : DbContext
 
         modelBuilder.Entity<GroupTeam>(entity =>
         {
-            entity.HasKey(e => e.GroupId).HasName("PK__GroupTea__149AF30A46B8DFB5");
+			entity.HasKey(e => new { e.AccountId, e.ProjectId })
+	        .HasName("PK_GroupTeam");
 
-            entity.ToTable("GroupTeam");
+			entity.ToTable("GroupTeam");
 
             entity.HasIndex(e => e.ProjectId, "IX_Group_ProjectID");
+			entity.HasIndex(e => e.AccountId, "IX_GroupTeam_AccountID");
 
-            entity.Property(e => e.GroupId)
-                .ValueGeneratedNever()
-                .HasColumnName("GroupID");
-            entity.Property(e => e.AccountId).HasColumnName("AccountID");
-            entity.Property(e => e.GroupCode)
-                .IsRequired()
-                .HasMaxLength(25);
-            entity.Property(e => e.GroupName)
-                .IsRequired()
-                .HasMaxLength(100);
+
+			entity.Property(e => e.AccountId).HasColumnName("AccountID");
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
-            entity.Property(e => e.SupervisorId).HasColumnName("SupervisorID");
+			entity.Property(e => e.GroupRole)
+		        .IsRequired();
 
-            entity.HasOne(d => d.Account).WithMany(p => p.GroupTeams)
+			entity.HasOne(d => d.Account).WithMany(p => p.GroupTeams)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Group_Account");
@@ -109,10 +104,7 @@ public partial class GithubReporterContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Group_Project");
 
-            entity.HasOne(d => d.Supervisor).WithMany(p => p.GroupTeams)
-                .HasForeignKey(d => d.SupervisorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Group_Supervisor");
+           
         });
 
         modelBuilder.Entity<Project>(entity =>
