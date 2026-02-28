@@ -99,8 +99,8 @@ public class StudentGradeController : Controller
 			));
 		}
 
-		await _studentGradeService.AddStudentGrade(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(null, "Student Grade created successfully"));
+		var result = await _studentGradeService.AddStudentGrade(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Student Grade created successfully"));
 
 	}
 

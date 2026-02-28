@@ -30,11 +30,14 @@ namespace GithubReporterService.Core
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
-		public async Task CreateGroupTeam(CreateGroupDTO request)
+		public async Task<GroupTeamDetailDTO> CreateGroupTeam(CreateGroupDTO request)
 		{
 			var newGroup = _mapper.Map<GroupTeam>(request);
-			await _groupTeamRepository.AddAsync(newGroup);
+			var addedGroup = await _groupTeamRepository.AddAsync(newGroup);
 			await _unitOfWork.SaveChangesAsync();
+
+			var groupTeamDetailDTO = _mapper.Map<GroupTeamDetailDTO>(addedGroup);
+			return groupTeamDetailDTO;
 		}
 
 		/// <summary>
@@ -44,7 +47,7 @@ namespace GithubReporterService.Core
 		/// <returns></returns>
 		/// <exception cref="Utilities.NotFoundException"></exception>
 		/// <exception cref="Utilities.BadRequestException"></exception>
-		public async Task AddTeamMember(CreateGroupDTO request)
+		public async Task<GroupTeamDetailDTO> AddTeamMember(CreateGroupDTO request)
 		{
 			// Check if group team exist by checking if there is a projectId exist
 			var existingGroupTeam = await _groupTeamRepository.FindAsync(o => o.ProjectId == request.ProjectId);
@@ -69,8 +72,11 @@ namespace GithubReporterService.Core
 
 
 			var newGroup = _mapper.Map<GroupTeam>(request);
-			await _groupTeamRepository.AddAsync(newGroup);
+			var addedMember = await _groupTeamRepository.AddAsync(newGroup);
 			await _unitOfWork.SaveChangesAsync();
+
+			var groupTeamDetailDTO = _mapper.Map<GroupTeamDetailDTO>(addedMember);
+			return groupTeamDetailDTO;
 		}
 
 		/// <summary>
@@ -118,7 +124,7 @@ namespace GithubReporterService.Core
 			var checkTeamMember = await _groupTeamRepository.FirstOrDefaultAsync(o => o.AccountId == accountId && o.ProjectId == projectId);
 			if (checkTeamMember != null)
 			{
-				throw new Utilities.BadRequestException($"Failed to remove team member with account id {accountId} from project {projectId}");
+				throw new Utilities.CRUDException($"Failed to remove team member with account id {accountId} from project {projectId}");
 			}
 		}
 

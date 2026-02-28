@@ -80,8 +80,8 @@ public class GroupTeamController : Controller
 			));
 		}
 
-		await _groupTeamService.CreateGroupTeam(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(null, "Group created successfully"));
+		var result = await _groupTeamService.CreateGroupTeam(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Group created successfully"));
 
 	}
 

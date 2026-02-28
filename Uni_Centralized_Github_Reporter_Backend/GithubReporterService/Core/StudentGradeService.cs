@@ -110,12 +110,14 @@ namespace GithubReporterService.Core
 
 		}
 
-		public async Task AddStudentGrade(AddStudentGradeDTO request)
+		public async Task<ViewStudentGradeDTO> AddStudentGrade(AddStudentGradeDTO request)
 		{
 			var newGrade = _mapper.Map<GradePerProject>(request);
 			newGrade.GradePerProjectId = Guid.NewGuid();
-			await _gradePerProjectRepository.AddAsync(newGrade);
+			var addedGrade = await _gradePerProjectRepository.AddAsync(newGrade);
 			await _unitOfWork.SaveChangesAsync();
+			var gradeDetailDTO = _mapper.Map<ViewStudentGradeDTO>(addedGrade);	
+
 		}
 
 		public async Task UpdateStudentGrade(UpdateStudentGradeDTO request, Guid gradeId)

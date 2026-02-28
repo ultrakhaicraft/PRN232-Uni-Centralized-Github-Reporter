@@ -11,9 +11,9 @@ namespace GithubReporterService.Interface;
 
 public interface IAccountService2
 {
-	public Task CreateStudentAccount(CreateStudentAccountDTO request);
+	public Task<StudentAccountDetailDTO> CreateStudentAccount(CreateStudentAccountDTO request);
 
-	public Task CreateSupervisorAccount(CreateSupervisorAccountDTO request);
+	public Task<SupervisorAccountDetailDTO> CreateSupervisorAccount(CreateSupervisorAccountDTO request);
 
 	public Task DeleteAccount(Guid accountId);
 

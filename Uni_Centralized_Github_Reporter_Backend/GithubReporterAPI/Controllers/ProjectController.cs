@@ -80,8 +80,8 @@ public class ProjectController : Controller
 			));
 		}
 
-		await _projectService.CreateProject(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(null, "Project created successfully"));
+		var result = await _projectService.CreateProject(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Project created successfully"));
 
 	}
 

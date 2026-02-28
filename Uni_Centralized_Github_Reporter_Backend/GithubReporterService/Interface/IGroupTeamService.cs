@@ -13,10 +13,10 @@ namespace GithubReporterService.Interface
 	{
 		public Task<PagedResult<GroupTeamViewDTO>> SearchGroupTeam(GroupTeamPagedRequest request);
 		public Task<List<GroupTeamDetailDTO>> GetGroupTeamByProjectId(Guid projectId);
-		public Task CreateGroupTeam(CreateGroupDTO request);
+		public Task<GroupTeamDetailDTO> CreateGroupTeam(CreateGroupDTO request);
 		public Task RemoveTeamMember(Guid accountId, Guid projectId);
 		public Task UpdateTeamMemberRole(UpdateGroupDTO request);
-		public Task AddTeamMember(CreateGroupDTO request);
+		public Task<GroupTeamDetailDTO> AddTeamMember(CreateGroupDTO request);
 
 
 	}
