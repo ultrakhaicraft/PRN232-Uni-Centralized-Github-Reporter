@@ -80,8 +80,8 @@ public class AccountController2 : Controller
 			));
 		}
 
-		await _accountService.CreateStudentAccount(request);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Account created successfully"));
+		var result =await _accountService.CreateStudentAccount(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Student Account created successfully"));
 
 	}
 
@@ -105,13 +105,13 @@ public class AccountController2 : Controller
 			));
 		}
 
-		await _accountService.CreateSupervisorAccount(request);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Account created successfully"));
+		var result = await _accountService.CreateSupervisorAccount(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Supervisor Account created successfully"));
 
 	}
 
 
-	[HttpPut("student/{groupId}")]
+	[HttpPut("student/{accountId}")]
 	[Authorize]
 	public async Task<ActionResult<ApiResponse<object>>> UpdateStudent(Guid accountId, [FromBody] UpdateStudentAccountDTO request)
 	{
@@ -135,7 +135,7 @@ public class AccountController2 : Controller
 
 	}
 
-	[HttpPut("supervisor/{groupId}")]
+	[HttpPut("supervisor/{accountId}")]
 	[Authorize]
 	public async Task<ActionResult<ApiResponse<object>>> UpdateSupervisor(Guid accountId, [FromBody] UpdateSupervisorAccountDTO request)
 	{

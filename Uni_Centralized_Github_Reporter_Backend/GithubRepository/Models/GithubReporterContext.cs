@@ -80,21 +80,16 @@ public partial class GithubReporterContext : DbContext
 
         modelBuilder.Entity<GroupTeam>(entity =>
         {
-			entity.HasKey(e => new { e.AccountId, e.ProjectId })
-	        .HasName("PK_GroupTeam");
+            entity.HasKey(e => new { e.AccountId, e.ProjectId });
 
-			entity.ToTable("GroupTeam");
+            entity.ToTable("GroupTeam");
 
             entity.HasIndex(e => e.ProjectId, "IX_Group_ProjectID");
-			entity.HasIndex(e => e.AccountId, "IX_GroupTeam_AccountID");
 
-
-			entity.Property(e => e.AccountId).HasColumnName("AccountID");
+            entity.Property(e => e.AccountId).HasColumnName("AccountID");
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
-			entity.Property(e => e.GroupRole)
-		        .IsRequired();
 
-			entity.HasOne(d => d.Account).WithMany(p => p.GroupTeams)
+            entity.HasOne(d => d.Account).WithMany(p => p.GroupTeams)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Group_Account");
@@ -103,8 +98,6 @@ public partial class GithubReporterContext : DbContext
                 .HasForeignKey(d => d.ProjectId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Group_Project");
-
-           
         });
 
         modelBuilder.Entity<Project>(entity =>
@@ -182,7 +175,6 @@ public partial class GithubReporterContext : DbContext
 
             entity.HasOne(d => d.Account).WithMany(p => p.Students)
                 .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Student_Account");
         });
 
@@ -202,7 +194,6 @@ public partial class GithubReporterContext : DbContext
 
             entity.HasOne(d => d.Account).WithMany(p => p.Supervisors)
                 .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Supervisor_Account");
         });
 

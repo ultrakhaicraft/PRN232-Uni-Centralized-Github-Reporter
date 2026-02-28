@@ -33,6 +33,24 @@ namespace GithubReporterService.DTO
 		}
 
 		/// <summary>
+		/// Response factory method for resource creation, status code is default to 201
+		/// </summary>
+		/// <param name="data"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		public static ApiResponse<T> CreatedSuccessReponse(T data, string message = "Create Success")
+		{
+			return new ApiResponse<T>
+			{
+				Success = true,
+				Message = message,
+				StatusCode = 201,
+				Data = data
+			};
+		}
+
+
+		/// <summary>
 		/// Error response factory method, status code is default to 500
 		/// </summary>
 		/// <param name="message"></param>

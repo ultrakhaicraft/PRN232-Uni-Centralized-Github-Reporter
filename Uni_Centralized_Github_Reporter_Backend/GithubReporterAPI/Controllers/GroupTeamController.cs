@@ -43,17 +43,17 @@ public class GroupTeamController : Controller
 
 	}
 
-	[HttpGet("{projectId}")]
+	[HttpGet("{groupTeamId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetDetail(Guid projectId)
+	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetDetail(Guid groupTeamId)
 	{
 
-		var result = await _groupTeamService.GetGroupTeamByProjectId(projectId);
+		var result = await _groupTeamService.GetGroupTeamByProjectId(groupTeamId);
 
 		if (result == null)
 		{
 			return NotFound(ApiResponse<List<GroupTeamDetailDTO>>
-				.ErrorResponse($"No Group Team with Id {projectId} found", statusCode: APIStatusCode.NotFound.GetHashCode()));
+				.ErrorResponse($"No Group Team with Id {groupTeamId} found", statusCode: APIStatusCode.NotFound.GetHashCode()));
 		}
 
 		return Ok(ApiResponse<List<GroupTeamDetailDTO>>.SuccessResponse(result, "Groups retrieved successfully"));
@@ -80,11 +80,63 @@ public class GroupTeamController : Controller
 			));
 		}
 
-		await _groupTeamService.CreateGroupTeam(request);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Group created successfully"));
+		var result = await _groupTeamService.CreateGroupTeam(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Group created successfully"));
 
 	}
 
+	[HttpPost("add")]
+	[Authorize]
+	public async Task<ActionResult<ApiResponse<object>>> AddTeamMember([FromBody] CreateGroupDTO request)
+	{
+
+		if (!ModelState.IsValid)
+		{
+			var errors = ModelState.Values
+				.SelectMany(v => v.Errors)
+				.Select(e => e.ErrorMessage)
+				.ToList();
+
+			return BadRequest(ApiResponse<object>.ErrorResponse(
+				"Validation failed",
+				statusCode: APIStatusCode.BadRequest.GetHashCode(),
+				errors
+			));
+		}
+
+		await _groupTeamService.AddTeamMember(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(null, "Team Member added successfully"));
+
+	}
+
+	/// <summary>
+	/// Change the role of team member in the project, accountId in the request body is used only for querying the team member, and projectId is also only for querying the project, then update the role of the team member in the project
+	/// </summary>
+	/// <param name="projectId"></param>
+	/// <param name="request"></param>
+	/// <returns></returns>
+	[HttpPatch("update-role")]
+	public async Task<ActionResult<ApiResponse<object>>> Edit([FromBody] UpdateGroupDTO request)
+	{
+
+		if (!ModelState.IsValid)
+		{
+			var errors = ModelState.Values
+				.SelectMany(v => v.Errors)
+				.Select(e => e.ErrorMessage)
+				.ToList();
+
+			return BadRequest(ApiResponse<object>.ErrorResponse(
+				"Validation failed",
+				400,
+				errors
+			));
+		}
+
+		await _groupTeamService.UpdateTeamMemberRole(request);
+		return Ok(ApiResponse<object>.SuccessResponse(null, "Team Member role updated successfully"));
+
+	}
 
 
 	[HttpDelete("delete")]

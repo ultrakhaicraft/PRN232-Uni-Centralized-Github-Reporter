@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GithubReporterRepository.Enum;
 using GithubReporterRepository.Interface;
 using GithubReporterRepository.Models;
 using GithubReporterService.DTO;
@@ -29,21 +30,24 @@ namespace GithubReporterService.Core
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
-		public async Task CreateGroupTeam(CreateGroupDTO request)
+		public async Task<GroupTeamDetailDTO> CreateGroupTeam(CreateGroupDTO request)
 		{
 			var newGroup = _mapper.Map<GroupTeam>(request);
-			await _groupTeamRepository.AddAsync(newGroup);
+			var addedGroup = await _groupTeamRepository.AddAsync(newGroup);
 			await _unitOfWork.SaveChangesAsync();
+
+			var groupTeamDetailDTO = _mapper.Map<GroupTeamDetailDTO>(addedGroup);
+			return groupTeamDetailDTO;
 		}
 
 		/// <summary>
-		/// Assign a team member to a project with some validation
+		/// Assign a team member to a project with some validation (Member =0, Leader = 1, Manager = 2)
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
 		/// <exception cref="Utilities.NotFoundException"></exception>
 		/// <exception cref="Utilities.BadRequestException"></exception>
-		public async Task AddTeamMember(CreateGroupDTO request)
+		public async Task<GroupTeamDetailDTO> AddTeamMember(CreateGroupDTO request)
 		{
 			// Check if group team exist by checking if there is a projectId exist
 			var existingGroupTeam = await _groupTeamRepository.FindAsync(o => o.ProjectId == request.ProjectId);
@@ -60,7 +64,7 @@ namespace GithubReporterService.Core
 			}
 
 			// Check if there is a team leader exist in the group team 
-			GroupTeam teamLeader = existingGroupTeam.FirstOrDefault(o => o.ProjectId == request.ProjectId && o.GroupRole == 1);
+			GroupTeam teamLeader = existingGroupTeam.FirstOrDefault(o => o.ProjectId == request.ProjectId && o.GroupRole == GroupRole.Leader.GetHashCode());
 			if (teamLeader != null)
 			{
 				throw new Utilities.NotFoundException($"A Team Leader has already exist, please assign a different role");
@@ -68,8 +72,11 @@ namespace GithubReporterService.Core
 
 
 			var newGroup = _mapper.Map<GroupTeam>(request);
-			await _groupTeamRepository.AddAsync(newGroup);
+			var addedMember = await _groupTeamRepository.AddAsync(newGroup);
 			await _unitOfWork.SaveChangesAsync();
+
+			var groupTeamDetailDTO = _mapper.Map<GroupTeamDetailDTO>(addedMember);
+			return groupTeamDetailDTO;
 		}
 
 		/// <summary>
@@ -112,6 +119,13 @@ namespace GithubReporterService.Core
 
 			_groupTeamRepository.Delete(groupTeam);
 			await _unitOfWork.SaveChangesAsync();
+
+			//Check if the team member still exist after deletion
+			var checkTeamMember = await _groupTeamRepository.FirstOrDefaultAsync(o => o.AccountId == accountId && o.ProjectId == projectId);
+			if (checkTeamMember != null)
+			{
+				throw new Utilities.CRUDException($"Failed to remove team member with account id {accountId} from project {projectId}");
+			}
 		}
 
 

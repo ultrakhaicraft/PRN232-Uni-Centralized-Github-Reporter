@@ -99,8 +99,8 @@ public class StudentGradeController : Controller
 			));
 		}
 
-		await _studentGradeService.AddStudentGrade(request);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Student Grade created successfully"));
+		var result = await _studentGradeService.AddStudentGrade(request);
+		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Student Grade created successfully"));
 
 	}
 
@@ -127,6 +127,14 @@ public class StudentGradeController : Controller
 		await _studentGradeService.UpdateStudentGrade(request, groupId);
 		return Ok(ApiResponse<object>.SuccessResponse(null, "Student Grade updated successfully"));
 
+	}
+
+	[HttpDelete("{studentGradeId}")]
+	[Authorize]
+	public async Task<ActionResult<ApiResponse<object>>> Delete(Guid studentGradeId)
+	{
+		await _studentGradeService.DeleteStudentGrade(studentGradeId);
+		return Ok(ApiResponse<object>.SuccessResponse(null, "Student Grade deleted successfully"));
 	}
 
 

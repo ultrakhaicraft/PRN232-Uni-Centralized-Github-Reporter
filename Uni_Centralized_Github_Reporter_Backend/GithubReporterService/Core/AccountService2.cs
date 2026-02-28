@@ -33,7 +33,7 @@ namespace GithubReporterService.Core
 			_mapper = mapper;
 		}
 
-		public async Task CreateStudentAccount(CreateStudentAccountDTO request)
+		public async Task<StudentAccountDetailDTO> CreateStudentAccount(CreateStudentAccountDTO request)
 		{
 
 			try
@@ -50,7 +50,7 @@ namespace GithubReporterService.Core
 				account.Status = AccountStatus.Active.GetHashCode();
 
 
-				await _accountRepository.AddAsync(account);
+				var addedAccount = await _accountRepository.AddAsync(account);
 
 				var student = new Student
 				{
@@ -60,10 +60,24 @@ namespace GithubReporterService.Core
 
 				};
 
-				await _studentRepository.AddAsync(student);
+				var addedStudent = await _studentRepository.AddAsync(student);
 
 				await _unitOfWork.SaveChangesAsync();
 				await _unitOfWork.CommitAsync();
+
+				var studentDTO = new StudentAccountDetailDTO
+				{
+					AccountId = addedAccount.AccountId,
+					Name = addedAccount.Name,
+					Email = addedAccount.Email,
+					Status = addedAccount.Status,
+					Role = addedAccount.Role,
+					DateCreated = addedAccount.DateCreated,
+					GithubEmail = addedAccount.GithubEmail,
+					StudentCode = addedStudent.StudentCode
+				};
+
+				return studentDTO;
 			}
 			catch (Exception)
 			{
@@ -73,7 +87,7 @@ namespace GithubReporterService.Core
 
 		}
 
-		public async Task CreateSupervisorAccount(CreateSupervisorAccountDTO request)
+		public async Task<SupervisorAccountDetailDTO> CreateSupervisorAccount(CreateSupervisorAccountDTO request)
 		{
 
 			try
@@ -89,7 +103,7 @@ namespace GithubReporterService.Core
 				account.DateCreated = DateTime.UtcNow;
 				account.Status = AccountStatus.Active.GetHashCode();
 
-				await _accountRepository.AddAsync(account);
+				var addedAccount = await _accountRepository.AddAsync(account);
 
 				var supervisor = new Supervisor
 				{
@@ -98,10 +112,24 @@ namespace GithubReporterService.Core
 					AccountId = accountId
 				};
 
-				await _supervisorRepository.AddAsync(supervisor);
+				var addedSupervisor = await _supervisorRepository.AddAsync(supervisor);
 
 				await _unitOfWork.SaveChangesAsync();
 				await _unitOfWork.CommitAsync();
+
+				var supervisorDTO = new SupervisorAccountDetailDTO
+				{
+					AccountId = addedAccount.AccountId,
+					Name = addedAccount.Name,
+					Email = addedAccount.Email,
+					Status = addedAccount.Status,
+					Role = addedAccount.Role,
+					DateCreated = addedAccount.DateCreated,
+					GithubEmail = addedAccount.GithubEmail,
+					SupervisorCode = addedSupervisor.SupervisorCode
+				};	
+
+				return supervisorDTO;
 			}
 			catch (Exception)
 			{
@@ -154,6 +182,13 @@ namespace GithubReporterService.Core
 				_accountRepository.Delete(account);
 				await _unitOfWork.SaveChangesAsync();
 				await transaction.CommitAsync();
+
+				//Check if the account is deleted successfully
+				var deletedAccount = await _accountRepository.GetByIdAsync(accountId);
+				if (deletedAccount != null)
+				{
+					throw new CRUDException($"Failed to delete account with {accountId}");
+				}
 
 			}
 			catch (Exception)

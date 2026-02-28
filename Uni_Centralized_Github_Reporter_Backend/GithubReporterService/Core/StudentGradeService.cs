@@ -50,7 +50,7 @@ namespace GithubReporterService.Core
 		{
 			IQueryable<GradePerProject> projects = _gradePerProjectRepository.GetQueryable();
 
-		
+
 			//Adjust conditions suitable
 			if (!string.IsNullOrEmpty(studentId.ToString()))
 			{
@@ -96,26 +96,28 @@ namespace GithubReporterService.Core
 				throw new NotFoundException("No grade found with the matching criteria");
 			}
 
-			
+
 
 			var result = projects.Select(p => new ViewStudentGradeDTO
 			{
-					ProjectId = p.ProjectId,
-					StudentId = p.StudentId,
-					GradePerProjectId = p.GradePerProjectId,
-					Grade = p.Grade
+				ProjectId = p.ProjectId,
+				StudentId = p.StudentId,
+				GradePerProjectId = p.GradePerProjectId,
+				Grade = p.Grade
 			});
 
 			return result.ToList();
 
 		}
 
-		public async Task AddStudentGrade(AddStudentGradeDTO request)
+		public async Task<ViewStudentGradeDTO> AddStudentGrade(AddStudentGradeDTO request)
 		{
 			var newGrade = _mapper.Map<GradePerProject>(request);
 			newGrade.GradePerProjectId = Guid.NewGuid();
-			await _gradePerProjectRepository.AddAsync(newGrade);
+			var addedGrade = await _gradePerProjectRepository.AddAsync(newGrade);
 			await _unitOfWork.SaveChangesAsync();
+			var gradeDetailDTO = _mapper.Map<ViewStudentGradeDTO>(addedGrade);	
+
 		}
 
 		public async Task UpdateStudentGrade(UpdateStudentGradeDTO request, Guid gradeId)
@@ -149,6 +151,23 @@ namespace GithubReporterService.Core
 			return detailDTO;
 		}
 
+		public async Task DeleteStudentGrade(Guid gradeId)
+		{
+			GradePerProject grade = await _gradePerProjectRepository.GetByIdAsync(gradeId);
+			if (grade == null)
+			{
+				throw new Utilities.NotFoundException($"Grade with {gradeId} not found");
+			}
+			_gradePerProjectRepository.Delete(grade);
+			await _unitOfWork.SaveChangesAsync();
 
+			//Check if the project is deleted successfully
+			var deletedGrade = await _gradePerProjectRepository.GetByIdAsync(gradeId);
+			if (deletedGrade != null)
+			{
+				throw new CRUDException($"Failed to delete grade with {gradeId}");
+			}
+
+		}
 	}
 }
