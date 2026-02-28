@@ -70,7 +70,7 @@ namespace GithubReporterAPI.Controllers
 
 		[HttpGet("commits-contribute")]
 		[Authorize]
-		public async Task<ActionResult<ApiResponse<CommitReportDto>>> GetCommitContribute([FromBody] string repositoryURL)
+		public async Task<ActionResult<ApiResponse<CommitReportDto>>> GetCommitContribute([FromQuery] string repositoryURL)
 		{
 
 			var result = await _reporterService.GenerateCommitReportAsync(repositoryURL);

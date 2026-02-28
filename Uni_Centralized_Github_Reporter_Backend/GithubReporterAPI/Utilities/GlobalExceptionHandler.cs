@@ -102,6 +102,12 @@ namespace GithubReporterAPI.Utilities
 					Errors: null
 				),
 
+				CRUDException crudEx => (
+					StatusCode: (int)HttpStatusCode.InternalServerError,
+					Message: crudEx.Message,
+					Errors: null
+				),
+
 				// Catch-all for unexpected exceptions
 				_ => (
 					StatusCode: (int)HttpStatusCode.InternalServerError,

@@ -14,6 +14,4 @@ public partial class Supervisor
     public string SupervisorCode { get; set; }
 
     public virtual Account Account { get; set; }
-
-    public virtual ICollection<GroupTeam> GroupTeams { get; set; } = new List<GroupTeam>();
 }

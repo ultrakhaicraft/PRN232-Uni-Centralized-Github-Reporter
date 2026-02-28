@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GithubReporterRepository.Enum;
 using GithubReporterRepository.Interface;
 using GithubReporterRepository.Models;
 using GithubReporterService.DTO;
@@ -37,7 +38,7 @@ namespace GithubReporterService.Core
 		}
 
 		/// <summary>
-		/// Assign a team member to a project with some validation
+		/// Assign a team member to a project with some validation (Member =0, Leader = 1, Manager = 2)
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
@@ -60,7 +61,7 @@ namespace GithubReporterService.Core
 			}
 
 			// Check if there is a team leader exist in the group team 
-			GroupTeam teamLeader = existingGroupTeam.FirstOrDefault(o => o.ProjectId == request.ProjectId && o.GroupRole == 1);
+			GroupTeam teamLeader = existingGroupTeam.FirstOrDefault(o => o.ProjectId == request.ProjectId && o.GroupRole == GroupRole.Leader.GetHashCode());
 			if (teamLeader != null)
 			{
 				throw new Utilities.NotFoundException($"A Team Leader has already exist, please assign a different role");
@@ -112,6 +113,13 @@ namespace GithubReporterService.Core
 
 			_groupTeamRepository.Delete(groupTeam);
 			await _unitOfWork.SaveChangesAsync();
+
+			//Check if the team member still exist after deletion
+			var checkTeamMember = await _groupTeamRepository.FirstOrDefaultAsync(o => o.AccountId == accountId && o.ProjectId == projectId);
+			if (checkTeamMember != null)
+			{
+				throw new Utilities.BadRequestException($"Failed to remove team member with account id {accountId} from project {projectId}");
+			}
 		}
 
 

@@ -51,6 +51,14 @@ namespace GithubReporterService.Core
 
 			_projectRepository.Delete(project);
 			await _unitOfWork.SaveChangesAsync();
+
+			//Check if the project is deleted successfully
+			var deletedProject = await _projectRepository.GetByIdAsync(projectId);
+			if (deletedProject != null)
+			{
+				throw new CRUDException($"Failed to delete project with {projectId}");
+			}
+
 		}
 
 		public async Task<ProjectDetailDTO> GetProjectById(Guid projectId)

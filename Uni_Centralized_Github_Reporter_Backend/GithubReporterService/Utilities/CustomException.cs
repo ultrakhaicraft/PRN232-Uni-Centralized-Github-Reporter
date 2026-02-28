@@ -58,4 +58,15 @@ namespace GithubReporterService.Utilities
 		{
 		}
 	}
+
+	/// <summary>
+	/// Mainly used for exception related to CRUD operations
+	/// Code is 500
+	/// </summary>
+	public class CRUDException : Exception
+	{
+		public CRUDException(string message) : base(message)
+		{
+		}
+	}
 }

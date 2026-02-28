@@ -15,6 +15,8 @@ namespace GithubReporterService.Interface
 		public Task AddStudentGrade(AddStudentGradeDTO request);
 		public Task<List<ViewStudentGradeDTO>> GetGradesByProjectIdAsync(Guid projectId);
 		public Task<List<ViewStudentGradeDTO>> GetGradesByStudentIdAsync(Guid studentId);
+		public Task DeleteStudentGrade(Guid gradeId);
+
 
 
 

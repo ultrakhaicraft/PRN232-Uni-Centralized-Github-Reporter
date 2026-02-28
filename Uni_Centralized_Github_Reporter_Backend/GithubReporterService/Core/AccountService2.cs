@@ -155,6 +155,13 @@ namespace GithubReporterService.Core
 				await _unitOfWork.SaveChangesAsync();
 				await transaction.CommitAsync();
 
+				//Check if the account is deleted successfully
+				var deletedAccount = await _accountRepository.GetByIdAsync(accountId);
+				if (deletedAccount != null)
+				{
+					throw new CRUDException($"Failed to delete account with {accountId}");
+				}
+
 			}
 			catch (Exception)
 			{
