@@ -81,7 +81,7 @@ public class ProjectController : Controller
 		}
 
 		var result = await _projectService.CreateProject(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Project created successfully"));
+		return StatusCode(statusCode: 201, ApiResponse<object>.CreatedSuccessReponse(result, "Project created successfully"));
 
 	}
 

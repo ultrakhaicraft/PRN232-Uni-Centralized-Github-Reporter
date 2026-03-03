@@ -81,7 +81,7 @@ public class GroupTeamController : Controller
 		}
 
 		var result = await _groupTeamService.CreateGroupTeam(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Group created successfully"));
+		return StatusCode(statusCode: 201,ApiResponse<object>.CreatedSuccessReponse(result, "Group created successfully"));
 
 	}
 
@@ -105,7 +105,7 @@ public class GroupTeamController : Controller
 		}
 
 		await _groupTeamService.AddTeamMember(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(null, "Team Member added successfully"));
+		return StatusCode(statusCode:201,ApiResponse<object>.CreatedSuccessReponse(null, "Team Member added successfully"));
 
 	}
 

@@ -100,7 +100,7 @@ public class StudentGradeController : Controller
 		}
 
 		var result = await _studentGradeService.AddStudentGrade(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Student Grade created successfully"));
+		return StatusCode(statusCode: 201, ApiResponse<object>.CreatedSuccessReponse(result, "Student Grade created successfully"));
 
 	}
 

@@ -117,6 +117,7 @@ namespace GithubReporterService.Core
 			var addedGrade = await _gradePerProjectRepository.AddAsync(newGrade);
 			await _unitOfWork.SaveChangesAsync();
 			var gradeDetailDTO = _mapper.Map<ViewStudentGradeDTO>(addedGrade);	
+			return gradeDetailDTO;
 
 		}
 
