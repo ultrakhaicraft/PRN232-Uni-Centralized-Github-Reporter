@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GithubReporterAPI.Controllers;
 
+[ApiController]
+[Route("api/auth")]
 public class AuthenticationController : ControllerBase
 {
 	private readonly IAuthenticationService _authenticationService;
