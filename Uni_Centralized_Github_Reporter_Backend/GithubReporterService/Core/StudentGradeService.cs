@@ -130,7 +130,9 @@ namespace GithubReporterService.Core
 				throw new NotFoundException($"Grade with {gradeId} not found");
 			}
 
-			grade = _mapper.Map<GradePerProject>(request);
+			grade.StudentId = request.StudentId;
+			grade.ProjectId = request.ProjectId;
+			grade.Grade = request.Grade;
 
 			_gradePerProjectRepository.Update(grade);
 			await _unitOfWork.SaveChangesAsync();

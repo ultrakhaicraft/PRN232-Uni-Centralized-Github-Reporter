@@ -77,7 +77,7 @@ builder.Services.AddScoped<DbContext>(provider =>
 	provider.GetRequiredService<GithubReporterContext>());
 
 
-//Add Services from other layers (TODO: Add a wrapper class to handle this)
+//Add Services from other layers 
 builder.Services.AddInfrastructure();
 
 

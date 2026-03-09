@@ -22,6 +22,11 @@ namespace GithubReporterService.Core
 
 		public async Task<PagedResult<CommitDto>> GetCommitsAsync(CommitPagedRequest request)
 		{
+			if(request.RepositoryUrl == null)
+			{
+				throw new BadRequestException("Repository URL cannot be null or empty");
+			}
+
 			// Get all commits from GitHub service
 			var allCommits = await _githubService.GetAllCommitsAsync(request.RepositoryUrl);
 
@@ -39,6 +44,11 @@ namespace GithubReporterService.Core
 
 		public async Task<PagedResult<PullRequestDto>> GetPullRequestsAsync(PullRequestPagedRequest request)
 		{
+			if (request.RepositoryUrl == null)
+			{
+				throw new BadRequestException("Repository URL cannot be null or empty");
+			}
+
 			// Get all commits from GitHub service
 			var allCommits = await _githubService.GetAllPullRequestsAsync(request.RepositoryUrl);
 
@@ -56,6 +66,11 @@ namespace GithubReporterService.Core
 
 		public async Task<PagedResult<IssueDto>> GetIssuesAsync(IssuePagedRequest request)
 		{
+			if (request.RepositoryUrl == null)
+			{
+				throw new BadRequestException("Repository URL cannot be null or empty");
+			}
+
 			// Get all commits from GitHub service
 			var allCommits = await _githubService.GetAllIssuesAsync(request.RepositoryUrl);
 

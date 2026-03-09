@@ -15,7 +15,7 @@ namespace GithubReporterService.Interface
 		Task<ProjectDetailDTO> GetProjectById(Guid projectId);
 		Task<ProjectDetailDTO> CreateProject(CreateProjectDTO request);
 		Task UpdateProject(UpdateProjectDTO request, Guid projectId);
-		Task DeleteProject(int projectId);
+		Task DeleteProject(Guid projectId);
 
 
 	}

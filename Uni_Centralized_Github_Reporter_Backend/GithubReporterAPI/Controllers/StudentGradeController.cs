@@ -107,7 +107,7 @@ public class StudentGradeController : Controller
 
 	[HttpPut("{studentGradeId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> Edit(Guid groupId, [FromBody] UpdateStudentGradeDTO request)
+	public async Task<ActionResult<ApiResponse<ViewStudentGradeDTO>>> Edit(Guid studentGradeId, [FromBody] UpdateStudentGradeDTO request)
 	{
 
 		if (!ModelState.IsValid)
@@ -124,8 +124,9 @@ public class StudentGradeController : Controller
 			));
 		}
 
-		await _studentGradeService.UpdateStudentGrade(request, groupId);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Student Grade updated successfully"));
+		await _studentGradeService.UpdateStudentGrade(request, studentGradeId);
+		var result = await _studentGradeService.GetGradeById(studentGradeId);
+		return Ok(ApiResponse<ViewStudentGradeDTO>.SuccessResponse(result, "Student Grade updated successfully"));
 
 	}
 

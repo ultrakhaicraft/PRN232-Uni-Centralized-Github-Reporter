@@ -48,7 +48,7 @@ namespace GithubReporterService.Core
 
 		}
 
-		public async Task DeleteProject(int projectId)
+		public async Task DeleteProject(Guid projectId)
 		{
 			GithubReporterRepository.Models.Project project = await _projectRepository.GetByIdAsync(projectId);
 
@@ -142,7 +142,12 @@ namespace GithubReporterService.Core
 				throw new NotFoundException($"Project with {projectId} not found");
 			}
 
-			 project = _mapper.Map<Project>(request);
+			project.ProjectName = request.ProjectName;
+			project.GithubLink = request.GithubLink;
+			project.Description = request.Description;
+			project.CreatedBy = request.CreatedBy;
+			project.AccessToken = request.AccessToken;
+
 
 			_projectRepository.Update(project);
 			await _unitOfWork.SaveChangesAsync();

@@ -17,6 +17,7 @@ namespace GithubReporterAPI.Utilities
 			services.AddScoped<IProjectService, ProjectService>();
 			services.AddScoped<IGroupTeamService, GroupTeamService>();
 			services.AddScoped<IGithubService, GithubService>();
+			services.AddScoped<IStudentGradeService, StudentGradeService>();
 			services.AddScoped<IReporterService, ReporterService>();
 			services.AddScoped<IAccountService2, AccountService2>();	
 			services.AddAutoMapper(cfg => cfg.AddMaps(typeof(MapperProfile).Assembly));

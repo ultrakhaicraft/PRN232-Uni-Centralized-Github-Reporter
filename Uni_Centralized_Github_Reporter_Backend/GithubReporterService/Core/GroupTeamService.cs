@@ -41,6 +41,24 @@ namespace GithubReporterService.Core
 		}
 
 		/// <summary>
+		/// Find a specific team member in a project by the accountId and projectId, if the team member exist, return the detail of the team member, if not exist, throw exception
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		/// <exception cref="Utilities.BadRequestException"></exception>
+		public async Task<GroupTeamDetailDTO> GetAMemberFromAProject(Guid projectId, Guid accountId)
+		{
+			var existingTeamMember = await _groupTeamRepository.FirstOrDefaultAsync(o => o.ProjectId == projectId && o.AccountId == accountId);
+			if (existingTeamMember == null)
+			{
+				throw new Utilities.BadRequestException($"Team member with account id {accountId} already exist in project {projectId}");
+			}
+
+			var groupTeamDetailDTO = _mapper.Map<GroupTeamDetailDTO>(existingTeamMember);	
+			return groupTeamDetailDTO;
+		}
+
+		/// <summary>
 		/// Assign a team member to a project with some validation (Member =0, Leader = 1, Manager = 2)
 		/// </summary>
 		/// <param name="request"></param>

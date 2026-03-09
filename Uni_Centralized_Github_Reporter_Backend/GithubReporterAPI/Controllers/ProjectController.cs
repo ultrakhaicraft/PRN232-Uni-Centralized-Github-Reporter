@@ -88,7 +88,7 @@ public class ProjectController : Controller
 
 	[HttpPut("{projectId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> Edit(Guid projectId, [FromBody] UpdateProjectDTO request)
+	public async Task<ActionResult<ApiResponse<ProjectDetailDTO>>> Edit(Guid projectId, [FromBody] UpdateProjectDTO request)
 	{
 
 		if (!ModelState.IsValid)
@@ -106,13 +106,14 @@ public class ProjectController : Controller
 		}
 
 		await _projectService.UpdateProject(request, projectId);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Project updated successfully"));
+		var result = await _projectService.GetProjectById(projectId); // Ensure the project exists after update, otherwise throw not found
+		return Ok(ApiResponse<ProjectDetailDTO>.SuccessResponse(result, "Project updated successfully"));
 
 	}
 
 	[HttpDelete("{projectId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> Delete(int projectId)
+	public async Task<ActionResult<ApiResponse<object>>> Delete(Guid projectId)
 	{
 
 		await _projectService.DeleteProject(projectId);

@@ -113,7 +113,7 @@ public class AccountController2 : Controller
 
 	[HttpPut("student/{accountId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> UpdateStudent(Guid accountId, [FromBody] UpdateStudentAccountDTO request)
+	public async Task<ActionResult<ApiResponse<AccountDetailDTO>>> UpdateStudent(Guid accountId, [FromBody] UpdateStudentAccountDTO request)
 	{
 
 		if (!ModelState.IsValid)
@@ -131,13 +131,14 @@ public class AccountController2 : Controller
 		}
 
 		await _accountService.UpdateStudentAccount(request, accountId);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Student updated successfully"));
+		var result = await _accountService.GetAccountById(accountId);
+		return Ok(ApiResponse<AccountDetailDTO>.SuccessResponse(result, "Student updated successfully"));
 
 	}
 
 	[HttpPut("supervisor/{accountId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<object>>> UpdateSupervisor(Guid accountId, [FromBody] UpdateSupervisorAccountDTO request)
+	public async Task<ActionResult<ApiResponse<AccountDetailDTO>>> UpdateSupervisor(Guid accountId, [FromBody] UpdateSupervisorAccountDTO request)
 	{
 
 		if (!ModelState.IsValid)
@@ -155,7 +156,8 @@ public class AccountController2 : Controller
 		}
 
 		await _accountService.UpdateSupervisorAccount(request, accountId);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Supervisor updated successfully"));
+		var result = await _accountService.GetAccountById(accountId);
+		return Ok(ApiResponse<AccountDetailDTO>.SuccessResponse(result, "Supervisor updated successfully"));
 
 	}
 

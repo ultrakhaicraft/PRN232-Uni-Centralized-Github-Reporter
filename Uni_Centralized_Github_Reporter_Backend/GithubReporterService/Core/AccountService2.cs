@@ -49,6 +49,9 @@ namespace GithubReporterService.Core
 				account.DateCreated = DateTime.UtcNow;
 				account.Status = AccountStatus.Active.GetHashCode();
 
+				//Hash the password
+				account.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
 
 				var addedAccount = await _accountRepository.AddAsync(account);
 
@@ -103,6 +106,7 @@ namespace GithubReporterService.Core
 				account.Role = Role.Supervisor.GetHashCode();
 				account.DateCreated = DateTime.UtcNow;
 				account.Status = AccountStatus.Active.GetHashCode();
+				account.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
 				var addedAccount = await _accountRepository.AddAsync(account);
 
