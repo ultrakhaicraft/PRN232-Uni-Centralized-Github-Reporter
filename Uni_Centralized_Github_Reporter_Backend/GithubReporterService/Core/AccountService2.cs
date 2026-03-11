@@ -49,6 +49,9 @@ namespace GithubReporterService.Core
 				account.DateCreated = DateTime.UtcNow;
 				account.Status = AccountStatus.Active.GetHashCode();
 
+				//Hash the password
+				account.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
 
 				var addedAccount = await _accountRepository.AddAsync(account);
 
@@ -68,6 +71,7 @@ namespace GithubReporterService.Core
 				var studentDTO = new StudentAccountDetailDTO
 				{
 					AccountId = addedAccount.AccountId,
+					StudentId = addedStudent.StudentId,
 					Name = addedAccount.Name,
 					Email = addedAccount.Email,
 					Status = addedAccount.Status,
@@ -102,6 +106,7 @@ namespace GithubReporterService.Core
 				account.Role = Role.Supervisor.GetHashCode();
 				account.DateCreated = DateTime.UtcNow;
 				account.Status = AccountStatus.Active.GetHashCode();
+				account.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
 				var addedAccount = await _accountRepository.AddAsync(account);
 
@@ -120,6 +125,7 @@ namespace GithubReporterService.Core
 				var supervisorDTO = new SupervisorAccountDetailDTO
 				{
 					AccountId = addedAccount.AccountId,
+					SupervisorId = addedSupervisor.SupervisorId,
 					Name = addedAccount.Name,
 					Email = addedAccount.Email,
 					Status = addedAccount.Status,
@@ -223,6 +229,7 @@ namespace GithubReporterService.Core
 			}
 			var detail= _mapper.Map<StudentAccountDetailDTO>(student);
 			detail.AccountId = account.AccountId;
+			detail.StudentId = student.StudentId;
 			detail.Name = account.Name;
 			detail.Email = account.Email;
 			detail.Status = account.Status;
@@ -243,6 +250,7 @@ namespace GithubReporterService.Core
 			}
 			var detail = _mapper.Map<SupervisorAccountDetailDTO>(supervisor);
 			detail.AccountId = account.AccountId;
+			detail.SupervisorId = supervisor.SupervisorId;
 			detail.Name = account.Name;
 			detail.Email = account.Email;
 			detail.Status = account.Status;

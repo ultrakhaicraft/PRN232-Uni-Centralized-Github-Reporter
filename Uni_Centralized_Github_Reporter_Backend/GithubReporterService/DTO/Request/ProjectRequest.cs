@@ -31,8 +31,6 @@ namespace GithubReporterService.DTO.Request
 
 		public Guid CreatedBy { get; set; }
 
-		public DateTime DateCreated { get; set; }
-
 		public string? AccessToken { get; set; }
 	}
 }

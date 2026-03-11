@@ -81,6 +81,17 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowFrontend", policy =>
+	{
+		policy.WithOrigins("http://localhost:3000") // React default
+			  .AllowAnyHeader()
+			  .AllowAnyMethod()
+			  .AllowCredentials();
+	});
+});
+
 builder.Services.AddDbContext<GithubReporterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
@@ -88,7 +99,7 @@ builder.Services.AddScoped<DbContext>(provider =>
 	provider.GetRequiredService<GithubReporterContext>());
 
 
-//Add Services from other layers (TODO: Add a wrapper class to handle this)
+//Add Services from other layers 
 builder.Services.AddInfrastructure();
 
 
@@ -107,6 +118,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 

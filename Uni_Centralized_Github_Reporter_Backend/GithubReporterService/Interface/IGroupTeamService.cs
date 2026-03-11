@@ -17,6 +17,8 @@ namespace GithubReporterService.Interface
 		public Task RemoveTeamMember(Guid accountId, Guid projectId);
 		public Task UpdateTeamMemberRole(UpdateGroupDTO request);
 		public Task<GroupTeamDetailDTO> AddTeamMember(CreateGroupDTO request);
+		public Task<GroupTeamDetailDTO> GetAMemberFromAProject(Guid projectId, Guid accountId);
+
 
 
 	}

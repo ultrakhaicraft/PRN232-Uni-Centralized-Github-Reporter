@@ -45,7 +45,7 @@ public class GroupTeamController : Controller
 
 	[HttpGet("{groupTeamId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetDetail(Guid groupTeamId)
+	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetGroupTeamDetail(Guid groupTeamId)
 	{
 
 		var result = await _groupTeamService.GetGroupTeamByProjectId(groupTeamId);
@@ -81,7 +81,7 @@ public class GroupTeamController : Controller
 		}
 
 		var result = await _groupTeamService.CreateGroupTeam(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(result, "Group created successfully"));
+		return StatusCode(statusCode: 201,ApiResponse<object>.CreatedSuccessReponse(result, "Group created successfully"));
 
 	}
 
@@ -105,7 +105,7 @@ public class GroupTeamController : Controller
 		}
 
 		await _groupTeamService.AddTeamMember(request);
-		return Ok(ApiResponse<object>.CreatedSuccessReponse(null, "Team Member added successfully"));
+		return StatusCode(statusCode:201,ApiResponse<object>.CreatedSuccessReponse(null, "Team Member added successfully"));
 
 	}
 
@@ -116,7 +116,7 @@ public class GroupTeamController : Controller
 	/// <param name="request"></param>
 	/// <returns></returns>
 	[HttpPatch("update-role")]
-	public async Task<ActionResult<ApiResponse<object>>> Edit([FromBody] UpdateGroupDTO request)
+	public async Task<ActionResult<ApiResponse<GroupTeamDetailDTO>>> UpdateMemberRole([FromBody] UpdateGroupDTO request)
 	{
 
 		if (!ModelState.IsValid)
@@ -134,7 +134,8 @@ public class GroupTeamController : Controller
 		}
 
 		await _groupTeamService.UpdateTeamMemberRole(request);
-		return Ok(ApiResponse<object>.SuccessResponse(null, "Team Member role updated successfully"));
+		var result = await _groupTeamService.GetAMemberFromAProject(request.ProjectId, request.AccountId);
+		return Ok(ApiResponse<GroupTeamDetailDTO>.SuccessResponse(result, "Team Member role updated successfully"));
 
 	}
 
