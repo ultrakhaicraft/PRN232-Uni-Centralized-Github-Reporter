@@ -10,6 +10,7 @@ using GithubReporterService.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,7 +66,9 @@ namespace GithubReporterService.Core
 			var result = projects.Select(p => new ViewStudentGradeDTO
 			{
 				ProjectId = p.ProjectId,
+				ProjectName = p.Project.ProjectName,
 				StudentId = p.StudentId,
+				StudentName = p.Student.Account.Name,
 				GradePerProjectId = p.GradePerProjectId,
 				Grade = p.Grade
 			});
@@ -101,7 +104,9 @@ namespace GithubReporterService.Core
 			var result = projects.Select(p => new ViewStudentGradeDTO
 			{
 				ProjectId = p.ProjectId,
+				ProjectName = p.Project.ProjectName,
 				StudentId = p.StudentId,
+				StudentName = p.Student.Account.Name,
 				GradePerProjectId = p.GradePerProjectId,
 				Grade = p.Grade
 			});
@@ -146,10 +151,21 @@ namespace GithubReporterService.Core
 
 			if (grade == null)
 			{
-				throw new NotFoundException($"Grade with {gradeId} not found");
+				throw new Utilities.NotFoundException($"Grade with {gradeId} not found");
 			}
 
-			var detailDTO = _mapper.Map<ViewStudentGradeDTO>(grade);
+
+
+			var detailDTO = new ViewStudentGradeDTO
+			{
+				ProjectId = grade.ProjectId,
+				ProjectName = grade.Project.ProjectName,
+				StudentId = grade.StudentId,
+				StudentName = grade.Student.Account.Name,
+				GradePerProjectId = grade.GradePerProjectId,
+				Grade = grade.Grade
+			};
+
 
 			return detailDTO;
 		}
