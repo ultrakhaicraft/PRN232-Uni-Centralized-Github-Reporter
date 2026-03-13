@@ -10,6 +10,7 @@ using GithubReporterService.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,18 +21,22 @@ namespace GithubReporterService.Core
 	{
 		private readonly IGenericRepository<GradePerProject> _gradePerProjectRepository;
 		private readonly IGenericRepository<Student> _studentRepository;
+		private readonly IGenericRepository<Account> _accountRepository;
 		private readonly IGenericRepository<Project> _projectRepository;
 		private readonly IMapper _mapper;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public StudentGradeService(IGenericRepository<GradePerProject> gradePerProjectRepository, IGenericRepository<Student> studentRepository, IGenericRepository<Project> projectRepository, IMapper mapper, IUnitOfWork unitOfWork)
+		public StudentGradeService(IGenericRepository<GradePerProject> gradePerProjectRepository, IGenericRepository<Student> studentRepository, IGenericRepository<Account> accountRepository, IGenericRepository<Project> projectRepository, IMapper mapper, IUnitOfWork unitOfWork)
 		{
 			_gradePerProjectRepository = gradePerProjectRepository;
 			_studentRepository = studentRepository;
+			_accountRepository = accountRepository;
 			_projectRepository = projectRepository;
 			_mapper = mapper;
 			_unitOfWork = unitOfWork;
 		}
+
+
 
 
 
@@ -65,7 +70,9 @@ namespace GithubReporterService.Core
 			var result = projects.Select(p => new ViewStudentGradeDTO
 			{
 				ProjectId = p.ProjectId,
+				ProjectName = p.Project.ProjectName,
 				StudentId = p.StudentId,
+				StudentName = p.Student.Account.Name,
 				GradePerProjectId = p.GradePerProjectId,
 				Grade = p.Grade
 			});
@@ -101,7 +108,9 @@ namespace GithubReporterService.Core
 			var result = projects.Select(p => new ViewStudentGradeDTO
 			{
 				ProjectId = p.ProjectId,
+				ProjectName = p.Project.ProjectName,
 				StudentId = p.StudentId,
+				StudentName = p.Student.Account.Name,
 				GradePerProjectId = p.GradePerProjectId,
 				Grade = p.Grade
 			});
@@ -112,6 +121,15 @@ namespace GithubReporterService.Core
 
 		public async Task<ViewStudentGradeDTO> AddStudentGrade(AddStudentGradeDTO request)
 		{
+			//Check if there is duplicate grade for the same student and project
+			var existingGrade = await _gradePerProjectRepository.GetQueryable()
+				.FirstOrDefaultAsync(g => g.StudentId == request.StudentId && g.ProjectId == request.ProjectId);
+
+			if (existingGrade != null)
+			{
+				throw new CRUDException($"Grade for student {request.StudentId} and project {request.ProjectId} already exists");
+			}
+
 			var newGrade = _mapper.Map<GradePerProject>(request);
 			newGrade.GradePerProjectId = Guid.NewGuid();
 			var addedGrade = await _gradePerProjectRepository.AddAsync(newGrade);
@@ -143,15 +161,41 @@ namespace GithubReporterService.Core
 		{
 
 			GradePerProject grade = await _gradePerProjectRepository.GetByIdAsync(gradeId);
-
 			if (grade == null)
 			{
 				throw new NotFoundException($"Grade with {gradeId} not found");
 			}
 
-			var detailDTO = _mapper.Map<ViewStudentGradeDTO>(grade);
+			Student student = await _studentRepository.GetByIdAsync(grade.StudentId);
+			if (student == null)
+			{
+				throw new NotFoundException($"Student with {grade.StudentId} not found");
+			}
 
-			return detailDTO;
+			Project project = await _projectRepository.GetByIdAsync(grade.ProjectId);
+			if ( project == null)
+			{
+				throw new NotFoundException($"Project with {grade.ProjectId} not found");
+			}
+
+			Account account = await _accountRepository.GetByIdAsync(student.AccountId);
+
+			if (account == null)
+			{
+				throw new NotFoundException($"Account with {student.AccountId} not found");
+			}
+
+			var result = new ViewStudentGradeDTO
+			{
+				ProjectId =grade.ProjectId,
+				ProjectName = project.ProjectName,
+				StudentId = grade.StudentId,
+				StudentName = account.Name,
+				GradePerProjectId = grade.GradePerProjectId,
+				Grade = grade.Grade
+			};
+
+			return result;
 		}
 
 		public async Task DeleteStudentGrade(Guid gradeId)

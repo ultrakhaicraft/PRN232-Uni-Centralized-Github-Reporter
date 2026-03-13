@@ -11,8 +11,10 @@ namespace GithubReporterService.DTO.Response
 		public Guid GradePerProjectId { get; set; }
 
 		public Guid StudentId { get; set; }
+		public string StudentName { get; set; } = string.Empty;
 
 		public Guid ProjectId { get; set; }
+		public string ProjectName { get; set; } = string.Empty;
 
 		public int Grade { get; set; }
 	}

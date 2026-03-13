@@ -43,17 +43,17 @@ public class GroupTeamController : Controller
 
 	}
 
-	[HttpGet("{groupTeamId}")]
+	[HttpGet("{projectId}")]
 	[Authorize]
-	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetGroupTeamDetail(Guid groupTeamId)
+	public async Task<ActionResult<ApiResponse<List<GroupTeamDetailDTO>>>> GetGroupTeamDetail(Guid projectId)
 	{
 
-		var result = await _groupTeamService.GetGroupTeamByProjectId(groupTeamId);
+		var result = await _groupTeamService.GetGroupTeamByProjectId(projectId);
 
 		if (result == null)
 		{
 			return NotFound(ApiResponse<List<GroupTeamDetailDTO>>
-				.ErrorResponse($"No Group Team with Id {groupTeamId} found", statusCode: APIStatusCode.NotFound.GetHashCode()));
+				.ErrorResponse($"No Group Team with Project Id {projectId} found", statusCode: APIStatusCode.NotFound.GetHashCode()));
 		}
 
 		return Ok(ApiResponse<List<GroupTeamDetailDTO>>.SuccessResponse(result, "Groups retrieved successfully"));

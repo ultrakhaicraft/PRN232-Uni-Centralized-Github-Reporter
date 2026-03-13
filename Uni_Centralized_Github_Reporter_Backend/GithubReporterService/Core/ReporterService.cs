@@ -1,4 +1,6 @@
-﻿using GithubReporterService.DTO;
+﻿using GithubReporterRepository.Interface;
+using GithubReporterRepository.Models;
+using GithubReporterService.DTO;
 using GithubReporterService.DTO.Request;
 using GithubReporterService.DTO.Response;
 using GithubReporterService.Interface;
@@ -14,10 +16,12 @@ namespace GithubReporterService.Core
 	public class ReporterService : IReporterService
 	{
 		private readonly IGithubService _githubService;
+		private readonly IGenericRepository<Account> _accountRepository;
 
-		public ReporterService(IGithubService githubService)
+		public ReporterService(IGithubService githubService, IGenericRepository<Account> accountRepository)
 		{
 			_githubService = githubService;
+			_accountRepository = accountRepository;
 		}
 
 		public async Task<PagedResult<CommitDto>> GetCommitsAsync(CommitPagedRequest request)
@@ -118,6 +122,21 @@ namespace GithubReporterService.Core
 				})
 				.OrderByDescending(u => u.CommitCount)
 				.ToList();
+
+			// ✅ Match GitHub emails with database accounts
+			foreach (var userStat in groupedCommits)
+			{
+				// Try to find account by GitHub email
+				var account = await _accountRepository.FirstOrDefaultAsync(a => a.GithubEmail == userStat.Email);
+
+				if (account != null)
+				{
+					// If found, use the account's name and email from database
+					userStat.Username = account.Name;
+					userStat.Email = account.Email;
+				}
+				// else: Keep the GitHub username and email
+			}
 
 			return new CommitReportDto
 			{

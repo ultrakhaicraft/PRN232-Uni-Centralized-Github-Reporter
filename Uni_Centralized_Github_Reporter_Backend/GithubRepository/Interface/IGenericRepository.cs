@@ -19,6 +19,11 @@ namespace GithubReporterRepository.Interface
 		IQueryable<T> GetQueryable();
 		Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
 		Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+		Task<IEnumerable<T>> FindWithIncludeAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
+
+		Task<T?> FirstOrDefaultWithIncludeAsync(
+			Expression<Func<T, bool>> predicate,
+			params Expression<Func<T, object>>[] includes);
 
 		// Add operations
 		Task<T> AddAsync(T entity);
