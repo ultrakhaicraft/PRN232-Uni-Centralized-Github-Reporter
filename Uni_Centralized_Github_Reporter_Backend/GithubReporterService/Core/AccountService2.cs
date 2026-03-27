@@ -40,6 +40,13 @@ namespace GithubReporterService.Core
 			{
 				await _unitOfWork.BeginTransactionAsync();
 
+				//Check if the email is already used by another account
+				var existingAccount = await _accountRepository.FirstOrDefaultAsync(a => a.Email == request.Email);
+				if (existingAccount != null)
+				{
+					throw new CRUDException($"Email {request.Email} is already used by another account");
+				}
+
 				var account = _mapper.Map<GithubReporterRepository.Models.Account>(request);
 
 				var accountId = Guid.NewGuid();
@@ -98,6 +105,15 @@ namespace GithubReporterService.Core
 			{
 
 				await _unitOfWork.BeginTransactionAsync();
+
+				//Check if the email is already used by another account
+				var existingAccount = await _accountRepository.FirstOrDefaultAsync(a => a.Email == request.Email);
+				if (existingAccount != null)
+				{
+					throw new CRUDException($"Email {request.Email} is already used by another account");
+				}
+
+
 				var account = _mapper.Map<Account>(request);
 
 				var accountId = Guid.NewGuid();
