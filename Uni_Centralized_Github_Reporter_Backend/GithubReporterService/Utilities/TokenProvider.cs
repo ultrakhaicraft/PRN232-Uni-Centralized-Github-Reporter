@@ -35,7 +35,8 @@ public class TokenProvider
 		{
 			new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, account.Name),
 			new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, account.Email),
-			new System.Security.Claims.Claim("AccountId", account.AccountId.ToString())
+			new System.Security.Claims.Claim("AccountId", account.AccountId.ToString()),
+			new System.Security.Claims.Claim("Role", account.Role.ToString())
 		};
 
 		//Generate token
